@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import styles from './page.module.css'
 
+// Login page for the app, landing page.
 export default function Home() {
   return (
     <main className={styles.main}>
