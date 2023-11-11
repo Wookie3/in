@@ -2,6 +2,7 @@
 // import styles from './page.module.css'
 import { useState } from 'react';
 import supabase from './utils/supabaseClient.js';
+import Link from 'next/link'
 
 
 // Login page for the app, landing page.
@@ -40,6 +41,7 @@ const Home = () => {
                         onKeyDown={(e) => { if (e.key == 'Enter') { handelLogin(email, password) } }}
                     />
                     <button onClick={() => handelLogin(email, password)}>Login</button>
+                    <Link href="/dashboard">Dashboard</Link>
                 </div>
                 <button onClick={() => handelLogout()}>Logout</button>
             </div>
