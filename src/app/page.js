@@ -22,10 +22,7 @@ const Home = () => {
     const handelLogout = async () => {
         const { error } = await supabase.auth.signOut();
         console.log(error)
-    }
-    const getSession = async () => {
-        const { data, error } = await supabase.auth.getSession()
-        return (data, error)
+        console.log('logged out')
     }
     return (
         <main className='main'>
