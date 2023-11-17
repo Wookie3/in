@@ -4,7 +4,7 @@
 const SubmitTask = () => {
     return (
         <div>
-            <h1>Submit Task</h1>
+            <h1>Propose a Task to your group here</h1>
         </div>
     );
 };
