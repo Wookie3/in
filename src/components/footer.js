@@ -5,12 +5,12 @@ const Footer = () => {
     return (
         <nav>
             <p>Contact Us:</p>
-            <Link href={'/dashboard'}>
+            <a href={'http://www.google.ca/'}>
                 <Button>
                     Social Link 1
                 </Button>
-            </Link>
-            <Link href={'/login'}>
+            </a>
+            <Link href={'http://www.bing.com/'}>
                 <Button>
                 Social Link 2
                 </Button>
