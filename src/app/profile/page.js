@@ -1,6 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import ProfilePage from '@/components/pages/profile.js';
 
 const Profile = async () => {
     const supabase = createServerComponentClient({ cookies });
@@ -13,7 +14,7 @@ const Profile = async () => {
     }
     return (
         <div>
-            <h1>Profile</h1>
+            <ProfilePage/>
         </div>
     )
 };
