@@ -17,7 +17,10 @@ const Dashboard = async () => {
     return (
         <div>
             <h1>Dashboard</h1>
-            <p>Dashboard page here</p>
+            <p>All the Rabbit Holes that you belong to here.</p>
+            <Link href="/rabbitHole/42">
+                RabbitHole
+            </Link>
         </div>
     )
 };
