@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import CreateRabbitholeForm from './createrabbithole.jsx';
 import Rabbitholelist from './rabbitholelist.jsx';
@@ -20,6 +20,8 @@ import {
   } from "@/components/ui/card"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
   
 /* import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -128,11 +130,31 @@ const tasks = [
 ]
 
 
+
 const Dashboard_clientside = ({user}) => {
-
+    const supabase = createClientComponentClient()
     const [filter_rabbitholes, setfilter_rabbitholes] = useState(testdata1);
+    const [username, setusername] = useState(null);
 
+    const getProfile = useCallback(async (user) => {
+            const { data: profileData, error: profileError } = await supabase
+            .from('Profile')
+            .select('*')
+            .eq('user_id', user.id)
+            .single()
+    
+            if (profileError) {
+                console.error(profileError)
+            }
 
+            if (profileData) {
+                setusername(profileData.username)
+              }  
+    })
+
+    useEffect(() => {
+        getProfile(user, setusername())
+      }, [user, getProfile])
 
     return(
         <>
@@ -140,7 +162,7 @@ const Dashboard_clientside = ({user}) => {
             {/* My Carrot Block Component */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6 items-center m-5">
 
-                <h1 className="text-3xl font-bold tracking-tight col-span-4">Hi, {user.email} </h1>
+                <h1 className="text-3xl font-bold tracking-tight col-span-4">Hi, {username} </h1>
 
                 <Card className="w-64 h-28 col-span-2">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
