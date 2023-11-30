@@ -150,7 +150,7 @@ const Dashboard_clientside = ({user}) => {
             if (profileData) {
                 setusername(profileData.username)
               }  
-    })
+    }, []);
 
     useEffect(() => {
         getProfile(user, setusername())
