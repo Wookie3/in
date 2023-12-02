@@ -10,7 +10,7 @@ export default function Memberlist( {members} ) {
     const list = members.map((member) => (
         <>
             <div key={member.membership_id} className="text-base font-semibold">
-                {member.username}
+                {member['Rabbit-hole'].group_name}
             </div>
             <Separator className="my-3" />
         </>

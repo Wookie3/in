@@ -17,17 +17,19 @@ import { Badge } from "@/components/ui/badge"
 
 function rabbitholeitem(data) {
 
+    const rabbitholeid = data.rabbithole_id;
+
     return (
         <>
-            <Link href="/tasks">
-                <Card className="flex justify-between items-center h-16 my-5 p-2 border-none shadow-none hover:bg-orange-50" key={data.Name}>
+            <Link href={`/profile/${rabbitholeid}`}>
+                <Card className="flex justify-between items-center h-16 my-5 p-2 border-none shadow-none hover:bg-orange-50" key={data.rabbithole_id}>
                     <CardHeader className="flex flex-col">
-                        <CardTitle className="text-lg" >{data.Name}</CardTitle>
-                        <CardDescription>{data.Descript}</CardDescription>
+                        <CardTitle className="text-lg" >{data.group_name}</CardTitle>
+                        <CardDescription>{data.description}</CardDescription>
                     </CardHeader>
 
                     <CardContent>
-                        <Badge> {`${data.members} members`} </Badge>
+                        <Badge> {`${data.Membership[0].count} members`} </Badge>
                     </CardContent>
 
                 </Card>
@@ -39,15 +41,17 @@ function rabbitholeitem(data) {
 
 
 
-export default function Rabbitholelist( {testdata} ) {
+export default function Rabbitholelist( {rabbitholedata} ) {
 
-    const datalist = testdata.map(data => rabbitholeitem(data));
+
+    const datalist = rabbitholedata.map(data => rabbitholeitem(data));
+    
     const no_communities = <div> No Rabbit-Holes Yet </div>;
 
     return(
         <ScrollArea className="h-72 rounded-md border my-5 p-2">
 
-            {testdata.length > 0 ? datalist : no_communities}
+            {rabbitholedata.length > 0 ? datalist : no_communities}
        
         </ScrollArea>
     ); 
