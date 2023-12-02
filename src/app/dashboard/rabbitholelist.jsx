@@ -21,7 +21,7 @@ function rabbitholeitem(data) {
 
     return (
         <>
-            <Link href={`/profile/${rabbitholeid}`}>
+            <Link href={`/rabbitHole/${rabbitholeid}`}>
                 <Card className="flex justify-between items-center h-16 my-5 p-2 border-none shadow-none hover:bg-orange-50" key={data.rabbithole_id}>
                     <CardHeader className="flex flex-col">
                         <CardTitle className="text-lg" >{data.group_name}</CardTitle>
