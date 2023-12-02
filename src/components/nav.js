@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
-const Nav = () => {
+const Nav = async () => {
+  const supabase = createServerComponentClient({ cookies });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const text = user ? "Sign Out" : "Sign In";
+
   return (
     <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
       <div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -46,11 +54,10 @@ const Nav = () => {
       </div>
       <form action="/auth/logout" method="post">
         <button type="submit" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-          Sign Out
+          {text}
         </button>
       </form>
     </nav>
-
   )
 };
 export default Nav;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -38,9 +38,7 @@ function DataTable({ columns, data }) {
       columnFilters,
     },
   });
-  // console.log('TABLE:', table)
   const headerGroups = table.getHeaderGroups();
-  // console.log('headerGroups:', headerGroups)
   return (
     <div>
       <div className="flex items-center py-4">
@@ -79,7 +77,7 @@ function DataTable({ columns, data }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                >
+                  >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -107,12 +105,3 @@ function DataTable({ columns, data }) {
   );
 }
 export default DataTable;
-// const dataTable = () => {
-//     return (
-//         <div>
-//             <h1>DataTable here.</h1>
-//         </div>
-//     );
-// };
-
-// export default dataTable;

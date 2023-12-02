@@ -31,7 +31,7 @@ const getData = async (id) => {
   // );
   return proposalData;
 };
-export const getUsername = async (userId) => {
+const getUsername = async (userId) => {
   const { data: userData, error: userError } = await supabase
     .from("profile")
     .select("username")
@@ -42,4 +42,14 @@ export const getUsername = async (userId) => {
     return userData;
   }
 }
-export default getData;
+const deleteProposal = async (id) => {
+  const { data, error } = await supabase
+    .from("Proposal")
+    .delete()
+    .eq("id", proposal_id);
+  if (error) {
+    console.log("error deleting proposal:", error);
+  }
+  return data;
+};
+export { getData, getUsername, deleteProposal };

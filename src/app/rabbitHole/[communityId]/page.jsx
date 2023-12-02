@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import DataTable from './data-table.jsx'
 import { columns } from './columns.jsx'
-import getData from './data.js'
+import {getData} from './data.js'
 import Link from 'next/link'
 
 // const getData = async () => {
