@@ -1,9 +1,9 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import TaskListPage from '@/components/pages/taskList.js';
+import Proposal from './proposal.jsx';
 
-const TaskList = async ({ params }) => {
+const TaskDetails = async ({ params }) => {
     const supabase = createServerComponentClient({ cookies });
     const {
         data: { user },
@@ -12,11 +12,12 @@ const TaskList = async ({ params }) => {
     if (!user) {
         redirect('/login');
     }
+    const id = params.taskId;
     return (
-        <div>
-            <h1>Task List for Rabbit Hole: {params.groupId}</h1>
-            <TaskListPage />
+        <div className=''>
+            <h1>Task Details for task {id}</h1>
+            <Proposal taskId={id} />
         </div>
     );
 };
-export default TaskList;
+export default TaskDetails;

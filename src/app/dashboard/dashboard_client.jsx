@@ -154,7 +154,7 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
             if (profileData) {
                 setusername(profileData.username)
               }  
-    }, [])
+    }, []);
       
     const getWallet = useCallback(async (user) => {
 
@@ -206,7 +206,6 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
         }
 
     }, [])
-
     useEffect(() => {
         getProfile(user, setusername())
       }, [user, getProfile])
