@@ -4,8 +4,8 @@ import { use } from "react";
 
 
 const submitToDB = async (data) => {
-    const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabase = createClient(URL, KEY);
 
   const { error: insertError } = await supabase
@@ -19,7 +19,8 @@ const submitToDB = async (data) => {
       rabbithole_id: data.rabbithole_id,
       title: data.title,
       user_id: data.user_id,
-      effort: data.effort
+      effort: data.effort,
+      status: data.status,
     })
   if (insertError) { console.log('error inserting data:', insertError) };
 };

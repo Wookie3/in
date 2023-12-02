@@ -6,22 +6,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import submitToDB from "./submitToDB";
 import { DatePicker } from "./datePicker";
-import { DatePickerWithRange } from "./dateRangePicker";
 
 
-const ProposalForm = ({user, rabbitHole}) => {
-  // let created = "";
-  // let updated = "";
+const ProposalForm = ({user, rabbitHoleId}) => {
   const [state, setState] = useState({
-    create_at: '',
-    update_at: '',
+    create_at: "",
+    update_at: "",
     description: "",
     deadline: "",
     rewards: "",
-    rabbithole_id: rabbitHole.rabbithole_id,
+    rabbithole_id: rabbitHoleId,
     title: "",
     user_id: user.id,
-    effort: ""
+    effort: "",
+    status: "pending",
   });
 
   const handleInputChange = (event) => {
@@ -105,8 +103,8 @@ const ProposalForm = ({user, rabbitHole}) => {
     if (validateForm()) {
       console.log('Form Validated');
       submitToDB(state);
+      alert("Form submitted");
     };
-    // console.log('FORM STATE: ', state);
   };
 
   return (
@@ -135,10 +133,12 @@ const ProposalForm = ({user, rabbitHole}) => {
         <div>
           <div className="form-control">
             <Label>Deadline</Label>
+            <div>
             <DatePicker 
             name="deadline"
             onDateChange={handleDeadlineChange}
             />
+            </div>
           </div>
           <div className="form-control">
             <Label>Effort</Label>
@@ -150,16 +150,6 @@ const ProposalForm = ({user, rabbitHole}) => {
               onChange={handleInputChange}
             />
           </div>
-          {/* <div className="form-control">
-            <Label>Validation</Label>
-            <DatePickerWithRange
-              type="validation_period"
-              name="validation_period"
-              onDateChange={handleValChange}
-              // value={state.validation}
-              // onChange={handleInputChange}
-            />
-          </div> */}
           <div className="form-control">
             <Label>Reward</Label>
             <Input
@@ -171,7 +161,7 @@ const ProposalForm = ({user, rabbitHole}) => {
             />
           </div>
         </div>
-        <div className="flex justify-center py-3 bg-orange-100">
+        <div className="flex justify-center py-3">
           <Button
           type="submit">Submit Proposal</Button>
         </div>
