@@ -1,5 +1,6 @@
 /* -- Dashboard Page - Server-Side -- */
 
+
 import Link from "next/link";
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 //import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -30,9 +31,25 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
+//Collects list of rabbitholes from database
+const getRabbitholes = async (supabase) => {
+
+    const { data: rabbitholes, error: rabbitholeError } = await supabase
+        .from('Rabbit-hole')
+        .select(`rabbithole_id, group_name, description, Membership(count)`)
+        .eq('is_active', true)
+
+    if (rabbitholeError) {
+        console.error(rabbitholeError)
+    }
+
+    if (rabbitholes) {
+        return rabbitholes
+    }
+}
 
 
-
+//Dashboard Server-Side
 const Dashboard = async () => {
     const supabase = createServerComponentClient({ cookies });
     const {
@@ -42,10 +59,16 @@ const Dashboard = async () => {
     if (!user) {
         redirect('/login');
     }
+
+    const initialRabbitholes = await getRabbitholes(supabase);
+
+
+
+
     return (
 
         <>
-            <Dashboard_clientside user={user}/>
+            <Dashboard_clientside user={user} initialRabbitholes={initialRabbitholes}/>
         </>
         
     )

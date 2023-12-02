@@ -2,7 +2,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 import CreateRabbitholeForm from './createrabbithole.jsx';
 import Rabbitholelist from './rabbitholelist.jsx';
@@ -129,12 +129,15 @@ const tasks = [
     },
 ]
 
+const Dashboard_clientside = ({user, initialRabbitholes}) => {
 
-
-const Dashboard_clientside = ({user}) => {
-    const supabase = createClientComponentClient()
-    const [filter_rabbitholes, setfilter_rabbitholes] = useState(testdata1);
+    const supabase = createClientComponentClient();
+    
+    const [filter_rabbitholes, setfilter_rabbitholes] = useState(initialRabbitholes);
     const [username, setusername] = useState(null);
+    const [wallet_balance, setwallet_balance] = useState(null);
+    const [damsirelist, setdamsirelist] = useState([]);
+    const [memberlist, setmemberlist] = useState([])
 
     const getProfile = useCallback(async (user) => {
             const { data: profileData, error: profileError } = await supabase
@@ -142,7 +145,8 @@ const Dashboard_clientside = ({user}) => {
             .select('*')
             .eq('user_id', user.id)
             .single()
-    
+
+            console.log(profileData)
             if (profileError) {
                 console.error(profileError)
             }
@@ -150,11 +154,74 @@ const Dashboard_clientside = ({user}) => {
             if (profileData) {
                 setusername(profileData.username)
               }  
-    })
+    }, [])
+      
+    const getWallet = useCallback(async (user) => {
+
+        const { data: walletData, error: walletError } = await supabase
+        .from('Wallet')
+        .select('balance')
+        .eq('user_id', user.id)
+        .single()
+
+        if (walletError) {
+            console.error(walletError)
+        }
+
+        if (walletData != null) {
+            setwallet_balance(walletData.balance)
+          }
+    }, [])
+
+    const getdamsirelist = useCallback(async (user) => {
+        const { data: damsireData, error: damsireError } = await supabase
+        .from('Membership')
+        .select(`membership_id, Rabbit-hole(rabbithole_id, group_name)`)
+        .eq('user_id', user.id)
+        .eq('is_damsire', true)
+
+        if (damsireError) {
+            console.error(damsireError)
+        }
+
+        if (damsireData != null) {
+            return damsireData
+        }
+
+    }, [])
+
+    const getMemberlist = useCallback(async (user) => {
+        const { data: memberData, error: memberError } = await supabase
+        .from('Membership')
+        .select(`membership_id, Rabbit-hole(rabbithole_id, group_name)`)
+        .eq('user_id', user.id)
+        .eq('is_damsire', false)
+
+        if (memberError) {
+            console.error(memberError)
+        }
+
+        if (memberData != null) {
+            return memberData
+        }
+
+    }, [])
 
     useEffect(() => {
         getProfile(user, setusername())
       }, [user, getProfile])
+
+    useEffect(() => {
+        getWallet(user, setwallet_balance())
+    }, [user, getWallet])
+
+    useEffect(() => {
+        getdamsirelist(user).then(admin => setdamsirelist(admin))
+    }, [user, getdamsirelist])
+
+    useEffect(() => {
+        getMemberlist(user).then(mem => setmemberlist(mem))
+    }, [user, getMemberlist])
 
     return(
         <>
@@ -171,7 +238,7 @@ const Dashboard_clientside = ({user}) => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">$ 45,231.89</div>
+                        <div className="text-2xl font-bold">{`$ ${wallet_balance}`}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -191,7 +258,7 @@ const Dashboard_clientside = ({user}) => {
                             <CardHeader className="flex flex-row justify-between items-center ">
                                 <CardTitle>Join A Rabbit Hole</CardTitle>
 
-                                <CreateRabbitholeForm />
+                                <CreateRabbitholeForm userid={user.id}/>
                             </CardHeader>
 
                             <CardContent className="h-96">
@@ -199,8 +266,8 @@ const Dashboard_clientside = ({user}) => {
 
                                 {/* {rabbitholelist(testdata2)} */}
 
-                                <Searchbar rabbitholes={testdata1} setfilter_rabbitholes={setfilter_rabbitholes} />
-                                <Rabbitholelist testdata={filter_rabbitholes} />
+                                <Searchbar rabbitholes={initialRabbitholes} setfilter_rabbitholes={setfilter_rabbitholes} />
+                                <Rabbitholelist rabbitholedata={filter_rabbitholes} />
                             </CardContent>
                         </Card>
 
@@ -211,10 +278,10 @@ const Dashboard_clientside = ({user}) => {
 
                             <CardContent className="pl-4">
                                 <h2 className="text-lg italic tracking-tight col-span-4 mb-1"> Admin </h2>
-                                <Memberlist members={members}/>
+                                <Memberlist members={damsirelist}/>
                                 
                                 <h2 className="text-lg italic tracking-tight col-span-4 my-4 mb-1"> Member </h2>
-                                <Memberlist members={no_members}/>
+                                <Memberlist members={memberlist}/>
                             </CardContent>
                         </Card>
                     </div>
@@ -316,3 +383,31 @@ export default Dashboard_clientside;
     <p>Validations</p>
 </CardContent>
 </Card> */}
+
+/* Old Supabase code */
+
+    //const [initialRabbitholes, set_initialRabbitholes] = useState([]);
+    // const getRabbitholes = useCallback( async () => {
+    
+    //     const { data: rabbitholes, error: rabbitholeError } = await supabase
+    //     .from('Rabbit-hole')
+    //     .select(`rabbithole_id, group_name, description, Membership(count)`)
+    //     .eq('is_active', true)
+        
+    //     if (rabbitholeError) {
+    //         console.error(rabbitholeError)
+    //     }
+        
+    //     if (rabbitholes) {
+    //         console.log(rabbitholes)
+    //         return rabbitholes
+    //     }
+    // }, [])
+
+    // useEffect(() => {
+    //     //getRabbitholes().then(rabbitholes => set_initialRabbitholes(rabbitholes))
+    //     //getRabbitholes().then(rabbitholes => set_initialRabbitholes(rabbitholes))
+
+    //   }, [])
+      
+   // const [filter_rabbitholes, setfilter_rabbitholes] = useState(initialRabbitholes);
