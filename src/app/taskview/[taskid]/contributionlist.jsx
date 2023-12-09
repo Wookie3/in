@@ -19,7 +19,7 @@ import {
 
 
 
-function displayContribution(con) {
+function DisplayContribution(con) {
 
     const supabase = createClientComponentClient();
 
@@ -77,7 +77,7 @@ function displayContribution(con) {
 
 export default function Contributionlist( {contributions}) {
 
-    const list = contributions.map((data) => displayContribution(data));
+    const list = contributions.map((data) => DisplayContribution(data));
 
     const no_list = <div> No Contributions Made Yet </div>;
 
