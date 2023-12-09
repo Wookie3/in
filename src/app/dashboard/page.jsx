@@ -76,7 +76,7 @@ const Dashboard = async () => {
         redirect('/login');
     }
 
-    console.log(user);
+   // console.log(user);
 
     const initialRabbitholes = await getRabbitholes(supabase);
     const userProfile = await getProfile(user, supabase);

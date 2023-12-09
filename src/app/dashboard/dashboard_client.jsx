@@ -299,7 +299,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
         getPrioritizationslist(userprofile).then(prioritization => setprioritizations(prioritization))
     }, [userprofile, getPrioritizationslist])
 
-    console.log(validations)
+    //console.log(validations)
 
     return(
         <>

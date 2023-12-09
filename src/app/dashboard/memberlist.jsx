@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 
 
 export default function Memberlist( {members} ) {
-    console.log(members);
+    //console.log(members);
 
     const list = members.map((member) => (
         <div key={member.membership_id} >
