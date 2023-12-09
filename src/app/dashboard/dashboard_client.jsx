@@ -129,43 +129,32 @@ const tasks = [
     },
 ]
 
-const Dashboard_clientside = ({user, initialRabbitholes}) => {
+const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
 
     const supabase = createClientComponentClient();
+    const username = userprofile.username;
     
     const [filter_rabbitholes, setfilter_rabbitholes] = useState(initialRabbitholes);
-    const [username, setusername] = useState(null);
+    //const [username, setusername] = useState(null);
     const [wallet_balance, setwallet_balance] = useState(null);
     const [damsirelist, setdamsirelist] = useState([]);
-    const [memberlist, setmemberlist] = useState([])
-
-    const getProfile = useCallback(async (user) => {
-            const { data: profileData, error: profileError } = await supabase
-            .from('Profile')
-            .select('*')
-            .eq('user_id', user.id)
-            .single()
-
-            console.log(profileData)
-            if (profileError) {
-                console.error(profileError)
-            }
-
-            if (profileData) {
-                setusername(profileData.username)
-              }  
-    }, []);
+    const [memberlist, setmemberlist] = useState([]);
+    const [proposals, setproposals] = useState([]);
+    const [contributions, setcontributions] = useState([]);
+    const [validations, setvalidations] = useState([]);
+    const [prioritizations, setprioritizations] = useState([]);
       
-    const getWallet = useCallback(async (user) => {
+    const getWallet = useCallback(async (userprofile) => {
 
         const { data: walletData, error: walletError } = await supabase
         .from('Wallet')
         .select('balance')
-        .eq('user_id', user.id)
+        .eq('profile_id', userprofile.profile_id)
         .single()
 
         if (walletError) {
             console.error(walletError)
+            throw walletError;
         }
 
         if (walletData != null) {
@@ -173,11 +162,11 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
           }
     }, [])
 
-    const getdamsirelist = useCallback(async (user) => {
+    const getdamsirelist = useCallback(async (userprofile) => {
         const { data: damsireData, error: damsireError } = await supabase
         .from('Membership')
         .select(`membership_id, Rabbit-hole(rabbithole_id, group_name)`)
-        .eq('user_id', user.id)
+        .eq('profile_id', userprofile.profile_id)
         .eq('is_damsire', true)
 
         if (damsireError) {
@@ -190,15 +179,16 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
 
     }, [])
 
-    const getMemberlist = useCallback(async (user) => {
+    const getMemberlist = useCallback(async (userprofile) => {
         const { data: memberData, error: memberError } = await supabase
         .from('Membership')
         .select(`membership_id, Rabbit-hole(rabbithole_id, group_name)`)
-        .eq('user_id', user.id)
+        .eq('profile_id', userprofile.profile_id)
         .eq('is_damsire', false)
 
         if (memberError) {
             console.error(memberError)
+            throw memberError;
         }
 
         if (memberData != null) {
@@ -206,21 +196,110 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
         }
 
     }, [])
-    useEffect(() => {
-        getProfile(user, setusername())
-      }, [user, getProfile])
+
+    const getProposallist = useCallback(async (userprofile) => {        
+        const { data: proposallist, error: proposallistError } = await supabase
+        .from('Proposal')
+        .select('proposal_id, title')
+        .eq('profile_id', userprofile.profile_id)
+
+
+        if (proposallistError) {
+            console.error(proposallistError)
+            throw proposallistError;
+        }
+
+        if (proposallist != null) {
+            return proposallist
+        }
+
+    }, [])
+
+    const getContributionlist = useCallback(async (userprofile) => {        
+        const { data: contributionlist, error: contributionlistError } = await supabase
+        .from('Contribution')
+        .select('contribution_id, title')
+        .eq('profile_id', userprofile.profile_id)
+
+
+        if (contributionlistError) {
+            console.error(contributionlistError)
+            throw contributionlistError;
+        }
+
+        if (contributionlist != null) {
+            return contributionlist
+        }
+
+    }, [])
+
+    const getValidationlist = useCallback(async (userprofile) => {        
+        const { data: validationlist, error: validationlistError } = await supabase
+        .from('Validation')
+        .select('validation_id, Contribution (contribution_id, title)')
+        .eq('profile_id', userprofile.profile_id)
+
+
+        if (validationlistError) {
+            console.error(validationlistError)
+            throw validationlistError;
+        }
+
+        if (validationlist != null) {
+            return validationlist
+        }
+
+    }, [])
+
+    const getPrioritizationslist = useCallback(async (userprofile) => {        
+        const { data: prioritizationlist, error: prioritizationlistError } = await supabase
+        .from('Prioritization')
+        .select('prioritization_id, Proposal (proposal_id, title)')
+        .eq('profile_id', userprofile.profile_id)
+
+        console.log(prioritizationlist)
+
+        if (prioritizationlistError) {
+            console.error(prioritizationlistError)
+            throw prioritizationlistError;
+        }
+
+        if (prioritizationlist != null) {
+            return prioritizationlist
+        }
+
+    }, [])
+
 
     useEffect(() => {
-        getWallet(user, setwallet_balance())
-    }, [user, getWallet])
+        getWallet(userprofile, setwallet_balance())
+    }, [userprofile, getWallet])
 
     useEffect(() => {
-        getdamsirelist(user).then(admin => setdamsirelist(admin))
-    }, [user, getdamsirelist])
+        getdamsirelist(userprofile).then(admin => setdamsirelist(admin))
+    }, [userprofile, getdamsirelist])
 
     useEffect(() => {
-        getMemberlist(user).then(mem => setmemberlist(mem))
-    }, [user, getMemberlist])
+        getMemberlist(userprofile).then(mem => setmemberlist(mem))
+    }, [userprofile, getMemberlist])
+
+    useEffect(() => {
+        getProposallist(userprofile).then(proposal => setproposals(proposal))
+    }, [userprofile, getProposallist])
+
+    useEffect(() => {
+        getContributionlist(userprofile).then(contribution => setcontributions(contribution))
+    }, [userprofile, getContributionlist])
+
+    useEffect(() => {
+        getValidationlist(userprofile).then(validation => setvalidations(validation))
+    }, [userprofile, getContributionlist])
+
+    useEffect(() => {
+        getPrioritizationslist(userprofile).then(prioritization => setprioritizations(prioritization))
+    }, [userprofile, getPrioritizationslist])
+
+    console.log(validations)
 
     return(
         <>
@@ -257,7 +336,7 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
                             <CardHeader className="flex flex-row justify-between items-center ">
                                 <CardTitle>Join A Rabbit Hole</CardTitle>
 
-                                <CreateRabbitholeForm userid={user.id}/>
+                                <CreateRabbitholeForm userprofileid={userprofile.profile_id}/>
                             </CardHeader>
 
                             <CardContent className="h-96">
@@ -296,7 +375,7 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
                             </CardHeader>
 
                             <CardContent className="h-96">
-                                <Mytasklist tasks={tasks}/> 
+                                <Mytasklist tasks={proposals}/> 
                             </CardContent>
                         </Card>
 
@@ -306,7 +385,7 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
                             </CardHeader>
 
                             <CardContent className="h-96">
-                                <Mytasklist tasks={tasks}/> 
+                                <Mytasklist tasks={prioritizations}/> 
                             </CardContent>
                         </Card>
 
@@ -316,7 +395,7 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
                             </CardHeader>
 
                             <CardContent className="h-96">
-                                <Mytasklist tasks={tasks}/> 
+                                <Mytasklist tasks={contributions}/> 
                             </CardContent>
                         </Card>
 
@@ -326,7 +405,7 @@ const Dashboard_clientside = ({user, initialRabbitholes}) => {
                             </CardHeader>
 
                             <CardContent className="h-96">
-                                <Mytasklist tasks={tasks}/> 
+                                <Mytasklist tasks={validations}/> 
                             </CardContent>
                         </Card>
                     </div>
@@ -410,3 +489,26 @@ export default Dashboard_clientside;
     //   }, [])
       
    // const [filter_rabbitholes, setfilter_rabbitholes] = useState(initialRabbitholes);
+
+
+      // const getProfile = useCallback(async (user) => {
+    //         const { data: profileData, error: profileError } = await supabase
+    //         .from('Profile')
+    //         .select('*')
+    //         .eq('user_id', user.id)
+    //         .single()
+
+    //         console.log(profileData)
+    //         if (profileError) {
+    //             console.error(profileError)
+    //         }
+
+    //         if (profileData) {
+    //             setusername(profileData.username)
+    //           }  
+    // }, []);
+
+
+        // useEffect(() => {
+    //     getProfile(user, setusername())
+    //   }, [user, getProfile])

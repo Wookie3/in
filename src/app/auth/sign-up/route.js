@@ -7,6 +7,32 @@ export async function POST(request) {
   const formData = await request.formData()
   const email = formData.get('email')
   const password = formData.get('password')
+  //const username = formData.get('username')
+  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+
+  console.log(formData)
+
+  await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${requestUrl.origin}/auth/callbacksignup`,
+    },
+  })
+
+  return NextResponse.redirect(requestUrl.origin + '/signup/welcome', {
+    status: 301,
+  })
+}
+
+
+/* export async function POST(request) {
+  const requestUrl = new URL(request.url)
+  const formData = await request.formData()
+  const email = formData.get('email')
+  const password = formData.get('password')
+  const username = formData.get('username')
   const cookieStore = cookies()
   const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
   const username = formData.get('username')
@@ -44,4 +70,4 @@ console.log('username:', username)
   return NextResponse.redirect(requestUrl.origin, {
     status: 301,
   })
-}
+} */
