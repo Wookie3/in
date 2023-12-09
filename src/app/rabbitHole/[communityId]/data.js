@@ -2,7 +2,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
-const getData = async (id) => {
+const getData = async (groupId) => {
   //     const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
   //     const KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   //     const supabase = createClient(URL, KEY);
@@ -10,7 +10,7 @@ const getData = async (id) => {
   const { data: proposalData, error: proposalError } = await supabase
     .from('Proposal')
     .select('*')
-    .eq('rabbithole_id', id)
+    .eq('rabbithole_id', groupId)
 
   if (proposalError) {
     console.log('Error fetching proposals: ', proposalError);

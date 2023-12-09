@@ -10,35 +10,23 @@ import Mytasklist from "./contributionsList";
 const tasks = [
   {
       task_id: 1,
-      title: 'Task 1'
+      title: 'Contribution 1'
   },
   {
       task_id: 2,
-      title: 'Task 2'
+      title: 'Contribution 2'
   },
   {
       task_id: 3,
-      title: 'Task 3'
+      title: 'Contribution 3'
   },
   {
       task_id: 4,
-      title: 'Task 4'
+      title: 'Contribution 4'
   },
   {
       task_id: 5,
-      title: 'Task 5'
-  },
-  {
-      task_id: 5,
-      title: 'Task 5'
-  },
-  {
-      task_id: 5,
-      title: 'Task 5'
-  },
-  {
-      task_id: 5,
-      title: 'Task 5'
+      title: 'Contribution 5'
   },
 ]
 
@@ -54,15 +42,6 @@ const Proposal = () => {
           <AccordionContent>
           <ScrollArea className="h-[400px] w-fit rounded-md border p-4">
             <Mytasklist tasks={tasks} />
-  Jokester began sneaking into the castle in the middle of the night and leaving
-  jokes all over the place: under the king's pillow, in his soup, even in the
-  royal toilet. The king was furious, but he couldn't seem to stop Jokester. And
-  then, one day, the people of the kingdom discovered that the jokes left by
-  Jokester were so funny that they couldn't help but laugh. And once they
-  started laughing, they couldn't stop.
-
-
-
   Jokester began sneaking into the castle in the middle of the night and leaving
   jokes all over the place: under the king's pillow, in his soup, even in the
   royal toilet. The king was furious, but he couldn't seem to stop Jokester. And
