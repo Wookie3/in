@@ -35,7 +35,7 @@ const contributions = (task) => {
     return(
         <div key={taskid} className='pt-4 hover:bg-orange-50'>
             <div className="text-base font-semibold">
-                <Link href={`/contribution/${taskid}`}>{task.title}</Link>
+                <Link href={`/contributionview/${taskid}`}>{task.title}</Link>
             </div>
         
             <Separator className="mt-4"/>
@@ -50,7 +50,7 @@ const validations = (task) => {
     return(
         <div key={taskid} className='pt-4 hover:bg-orange-50'>
             <div className="text-base font-semibold">
-                <Link href={`/contribution/${taskid}`}>{task.Contribution.title}</Link>
+                <Link href={`/contributionview/${taskid}`}>{task.Contribution.title}</Link>
             </div>
         
             <Separator className="mt-4"/>

@@ -63,7 +63,7 @@ function displayContribution(con) {
 
                 </div>
 
-                <Link href={`/contribution`}>
+                <Link href={`/contributionview/${con.contribution_id}`}>
                     <Button>View</Button>
                 </Link>
 
