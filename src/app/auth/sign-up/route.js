@@ -17,11 +17,11 @@ export async function POST(request) {
     email,
     password,
     options: {
-      emailRedirectTo: `${requestUrl.origin}/auth/callback`,
+      emailRedirectTo: `${requestUrl.origin}/auth/callbacksignup`,
     },
   })
 
-  return NextResponse.redirect(requestUrl.origin, {
+  return NextResponse.redirect(requestUrl.origin + '/signup/welcome', {
     status: 301,
   })
 }

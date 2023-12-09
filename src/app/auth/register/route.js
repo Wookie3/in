@@ -7,7 +7,6 @@ export async function POST(request) {
     const formData = await request.formData()
     const email = formData.get('email')
     const password = formData.get('password')
-    const uname = formData.get('username')
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
@@ -17,13 +16,13 @@ export async function POST(request) {
         email,
         password,
         options: {
-            emailRedirectTo: `${requestUrl.origin}/auth/callback`,
+            emailRedirectTo: `${requestUrl.origin}/auth/callbacksignup`,
         },
     })
 
 
 
-    return NextResponse.redirect(requestUrl.origin + '/tasks', {
+    return NextResponse.redirect(requestUrl.origin + '/signup/welcome', {
         status: 301,
     })
 }
@@ -39,3 +38,29 @@ export async function POST(request) {
 //       emailRedirectTo: `${requestUrl.origin}/auth/callback`,
 //     },
 //   })
+
+// export async function POST(request) {
+//     const requestUrl = new URL(request.url)
+//     const formData = await request.formData()
+//     const email = formData.get('email')
+//     const password = formData.get('password')
+//     const uname = formData.get('username')
+//     const cookieStore = cookies()
+//     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+
+//     console.log(formData)
+
+//     await supabase.auth.signUp({
+//         email,
+//         password,
+//         options: {
+//             emailRedirectTo: `${requestUrl.origin}/auth/callback`,
+//         },
+//     })
+
+
+
+//     return NextResponse.redirect(requestUrl.origin + '/tasks', {
+//         status: 301,
+//     })
+// }
