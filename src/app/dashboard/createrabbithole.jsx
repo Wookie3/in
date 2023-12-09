@@ -72,7 +72,7 @@ const formSchema = z.object({
   
 
 
-export default function CreateRabbitholeForm({userid}) {
+export default function CreateRabbitholeForm({userprofileid}) {
 
   const supabase = createClientComponentClient();
 
@@ -110,6 +110,7 @@ export default function CreateRabbitholeForm({userid}) {
 
     if (newRabbitholeError) {
       console.error(newRabbitholeError)
+      throw newRabbitholeError;
     }
 
     const { error: newMembershipError } = await supabase
@@ -117,11 +118,24 @@ export default function CreateRabbitholeForm({userid}) {
         .insert( {
           is_damsire: true,
           rabbithole_id: newRabbithole[0].rabbithole_id,
-          user_id: userid
+          profile_id: userprofileid
         })
     
     if (newMembershipError) {
       console.error(newMembershipError)
+      throw newMembershipError;
+    }
+
+    const { error: newCarrotpotError } = await supabase
+    .from('Carrot-Pot')
+    .insert( {
+      balance: 0.00,
+      rabbithole_id: newRabbithole[0].rabbithole_id
+    })
+
+    if (newCarrotpotError) {
+      console.error(newCarrotpotError)
+      throw newCarrotpotError;
     }
 
     if (isSubmitted === false) {

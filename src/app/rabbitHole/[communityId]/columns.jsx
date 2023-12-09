@@ -11,21 +11,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { reportProposal } from "./clientDataCalls.js";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-// export const payment = {
-//   id: '',
-//   amount: 0,
-//   status: "pending" | "processing" | "success" | "failed",
-//   email: ''
+// import { useCallback, useState, useEffect } from "react";
+// import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+// export type Payment = {
+//   id: string
+//   amount: number
+//   status: "pending" | "processing" | "success" | "failed" | "reported"
+//   email: string
 // }
-
+ 
+// export const columns: ColumnDef<Payment>[] = [
 export const columns = [
-  {
-    accessorKey: "status",
-    header: "Status",
-  },
   {
     accessorKey: "title",
     header: "Title",
@@ -77,14 +75,17 @@ export const columns = [
     },
   },
   {
-    accessorKey: "user_id",
+    accessorKey: "Profile",
     header: "Proposer",
     header: () => <div className="text-center">Proposer</div>,
     cell: ({ row }) => {
-      const userId = row.getValue("user_id");
-      // const userName = getUsername(userId);
-      return <div className="text-right font-medium">{userId}</div>;
+      const profile = row.getValue("Profile");
+      return <div className="text-right font-medium">{profile.username}</div>;
     },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
   },
   {
     accessorKey: "rewards",
@@ -110,7 +111,7 @@ export const columns = [
         // currency: "USD",
       }).format(rewards);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="text-center font-medium">{formatted}</div>;
     },
   },
   {
@@ -127,13 +128,14 @@ export const columns = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Options</DropdownMenuLabel>
+            {/* <DropdownMenuLabel>Options</DropdownMenuLabel> */}
             <DropdownMenuItem>
-              <Link href={link}>
-              View proposal details
-              </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <Link href={link}>View proposal details</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => alert("Not implemented")}>
+              Prioritize Proposal
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() =>
                 navigator.clipboard.writeText(
@@ -147,21 +149,22 @@ Effort: ${proposal.effort}`
                 )
               }
             >
-              Copy proposal
+              Copy to clipboard
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => alert("Not implemented")}
-            >Prioritize Proposal
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Button variant="seconday" className='w-full' onClick={() => alert("Not implemented")}>
+            {/* <DropdownMenuItem>
+              <Button
+                variant="seconday"
+                className="w-full"
+                onClick={() => alert("Not implemented")}
+              >
                 Edit
-                </Button>
+              </Button>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Button variant="destructive" className='w-full' onClick={() => alert("Not implemented")}>
-                Delete
+              <Button variant="destructive" className='w-full' onClick={() => reportProposal(proposal.proposal_id)} >
+                Report Proposal
                 </Button>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );

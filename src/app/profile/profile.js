@@ -11,8 +11,8 @@ const ProfilePage = (data) => {
         <div>
             <h1>Profile Page.</h1>
             <p>Welcome back!</p>
-            <p>User: {Data.profileData.username}</p>
-            <p>Wallet Total: {Data.walletData.balance}</p>
+            <p>User: {Data.profileData?.username}</p>
+            <p>Wallet Total: {Data.walletData?.balance}</p>
             <Link href='/rabbitHole/1'>A Rabbit Hole</Link>
             <p>
             <Link href='/rabbitHole/1/submitProposal'>Submit a Proposal</Link>
