@@ -160,7 +160,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
         if (walletData != null) {
             setwallet_balance(walletData.balance)
           }
-    }, [])
+    }, [supabase])
 
     const getdamsirelist = useCallback(async (userprofile) => {
         const { data: damsireData, error: damsireError } = await supabase
@@ -177,7 +177,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
             return damsireData
         }
 
-    }, [])
+    }, [supabase])
 
     const getMemberlist = useCallback(async (userprofile) => {
         const { data: memberData, error: memberError } = await supabase
@@ -195,7 +195,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
             return memberData
         }
 
-    }, [])
+    }, [supabase])
 
     const getProposallist = useCallback(async (userprofile) => {        
         const { data: proposallist, error: proposallistError } = await supabase
@@ -213,7 +213,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
             return proposallist
         }
 
-    }, [])
+    }, [supabase])
 
     const getContributionlist = useCallback(async (userprofile) => {        
         const { data: contributionlist, error: contributionlistError } = await supabase
@@ -231,7 +231,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
             return contributionlist
         }
 
-    }, [])
+    }, [supabase])
 
     const getValidationlist = useCallback(async (userprofile) => {        
         const { data: validationlist, error: validationlistError } = await supabase
@@ -249,7 +249,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
             return validationlist
         }
 
-    }, [])
+    }, [supabase])
 
     const getPrioritizationslist = useCallback(async (userprofile) => {        
         const { data: prioritizationlist, error: prioritizationlistError } = await supabase
@@ -268,7 +268,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
             return prioritizationlist
         }
 
-    }, [])
+    }, [supabase])
 
 
     useEffect(() => {
@@ -293,7 +293,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
 
     useEffect(() => {
         getValidationlist(userprofile).then(validation => setvalidations(validation))
-    }, [userprofile, getContributionlist])
+    }, [userprofile, getValidationlist])
 
     useEffect(() => {
         getPrioritizationslist(userprofile).then(prioritization => setprioritizations(prioritization))

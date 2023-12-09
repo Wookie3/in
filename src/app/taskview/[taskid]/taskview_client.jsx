@@ -51,7 +51,7 @@ const Taskview_clientside = ({ userProfile, task, task_contributions }) => {
         if (proposerData) {
             setproposer(proposerData.username)
           }  
-    }, []);
+    }, [supabase]);
 
     useEffect(() => {
         getProposer(task.profile_id, setproposer())
