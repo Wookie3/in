@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 
 
-function displayContributor(con) {
+function DisplayContributor(con) {
 
     const supabase = createClientComponentClient();
 
@@ -28,7 +28,7 @@ function displayContributor(con) {
     
         setcontributor(contributorData.username);
     
-    }, []);
+    }, [supabase]);
 
     useEffect(() => {
         getContributor(con.profile_id, setcontributor())
@@ -50,7 +50,7 @@ export default function Contributors({contributinguser}) {
 
     const no_list = <div> No Contributors Yet </div>;
 
-    const list = contributinguser.map((data) => displayContributor(data));
+    const list = contributinguser.map((data) => DisplayContributor(data));
 
     
     return (

@@ -39,7 +39,7 @@ function DisplayContribution(con) {
     
         setcontributor(contributorData.username);
     
-    }, []);
+    }, [supabase]);
 
     useEffect(() => {
         getContributor(con.profile_id, setcontributor())
