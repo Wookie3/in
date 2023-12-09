@@ -1,20 +1,9 @@
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import DataTable from "./data-table.jsx";
-import { columns } from "./columns.jsx";
-import { getData } from "./data.js";
+
 import CommunityPage from "./communityPage.jsx";
 import RequesCarrots from "./requestCarrots.jsx";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 const Proposals = async ({ params }) => {
   const supabase = createServerComponentClient({ cookies });
@@ -34,15 +23,6 @@ const Proposals = async ({ params }) => {
   if (membershipError) {
     console.log("Error getting membership data", membershipError);
   }
-  // console.log("membershipData", membershipData);
-  // const { data: proposalData, error: proposalError } = await supabase
-  //   .from("Proposal")
-  //   .select(`*, Profile (username)`)
-  //   .eq("rabbithole_id", params.communityId);
-
-  // if (proposalError) {
-  //   console.log("Error fetching proposals: ", proposalError);
-  // }
   const { data: communityData, error: communityError } = await supabase
     .from("Rabbit-hole")
     .select("*")
@@ -85,17 +65,6 @@ const Proposals = async ({ params }) => {
         carrotPotData={carrotPotData}
         profile={profileData}
       />
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>Proposals</CardTitle>
-          <CardDescription>
-            All current proposals for {communityData?.group_name}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={columns} data={proposalData} />
-        </CardContent>
-      </Card> */}
       <div className="flex items-center flex-col gap-4"></div>
       {adminRequestCarrots(user.id)}
     </div>

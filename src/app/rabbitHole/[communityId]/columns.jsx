@@ -118,7 +118,7 @@ export const columns = [
     id: "actions",
     cell: ({ row }) => {
       const proposal = row.original;
-      const link = `/task/${proposal.proposal_id}`;
+      const link = `/taskview/${proposal.proposal_id}`;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
