@@ -26,14 +26,12 @@ const Profile = async () => {
     const { data: walletData, error: walletError } = await supabase
         .from('Wallet')
         .select('balance')
-        .eq('user_id', user.id)
-        // .eq('wallet_id', profileData.wallet_id)
+        .eq(`profile_id`, profileData.profile_id)
         .single();
 
     if (walletError) {
         console.error('Error fetching wallet:', walletError);
     }
-    // const walletTotal = walletData ? walletData.balance : 0;
     return (
         <div>
             <ProfilePage profileData={profileData} walletData={walletData} />

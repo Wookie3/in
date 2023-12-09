@@ -1,6 +1,3 @@
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-
 export default function SignUp() {
   return (
     <div className="flex items-center justify-center h-screen">
@@ -94,4 +91,3 @@ export default function SignUp() {
     </div>
   )
 } */
-

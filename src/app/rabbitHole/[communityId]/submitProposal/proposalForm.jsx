@@ -78,7 +78,7 @@ const ProposalForm = ({user, rabbitHoleId}) => {
     state.create_at = state.create_at.replace('T', ' ').replace('.','+00').slice(0, 22); // convert date format to postgres format
     state.update_at = state.update_at.replace('T', ' ').replace('.','+00').slice(0, 22);
     state.deadline = (state.deadline ? new Date(state.deadline).toJSON().replace('T', ' ').replace('.','+00').slice(0, 22) : state.deadline);
-        
+    
     // const placeholderState = {
     //   create_at: '2023-11-27T04:51:32+00:00',
     //   update_at: '2023-11-27T04:51:35+00:00',
