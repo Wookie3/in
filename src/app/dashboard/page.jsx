@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { Underdog } from "next/font/google/index.js";
 
 //Collects list of rabbitholes from database
 const getRabbitholes = async (supabase) => {
@@ -41,11 +42,26 @@ const getRabbitholes = async (supabase) => {
 
     if (rabbitholeError) {
         console.error(rabbitholeError)
+        throw rabbitholeError;
     }
 
-    if (rabbitholes) {
-        return rabbitholes
+    return rabbitholes;
+}
+
+//Gets profile data for user
+const getProfile = async (user, supabase) => {
+    const { data: profileData, error: profileError } = await supabase
+    .from('Profile')
+    .select(`profile_id, username`)
+    .eq('user_id', user.id)
+    .single()
+
+    if (profileError) {
+        //console.error(profileError)
+        throw profileError;
     }
+
+    return profileData;
 }
 
 
@@ -60,7 +76,13 @@ const Dashboard = async () => {
         redirect('/login');
     }
 
+    console.log(user);
+
     const initialRabbitholes = await getRabbitholes(supabase);
+    const userProfile = await getProfile(user, supabase);
+
+   // console.log(userProfile)
+    //console.log(initialRabbitholes)
 
 
 
@@ -68,7 +90,7 @@ const Dashboard = async () => {
     return (
 
         <>
-            <Dashboard_clientside user={user} initialRabbitholes={initialRabbitholes}/>
+            <Dashboard_clientside userprofile={userProfile} initialRabbitholes={initialRabbitholes}/>
         </>
         
     )

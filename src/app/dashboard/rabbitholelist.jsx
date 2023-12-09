@@ -20,9 +20,9 @@ function rabbitholeitem(data) {
     const rabbitholeid = data.rabbithole_id;
 
     return (
-        <>
+        <div key={data.rabbithole_id}>
             <Link href={`/rabbitHole/${rabbitholeid}`}>
-                <Card className="flex justify-between items-center h-16 my-5 p-2 border-none shadow-none hover:bg-orange-50" key={data.rabbithole_id}>
+                <Card className="flex justify-between items-center h-16 my-5 p-2 border-none shadow-none hover:bg-orange-50">
                     <CardHeader className="flex flex-col">
                         <CardTitle className="text-lg" >{data.group_name}</CardTitle>
                         <CardDescription>{data.description}</CardDescription>
@@ -35,7 +35,7 @@ function rabbitholeitem(data) {
                 </Card>
             </Link>
             <Separator className="my-1" />
-        </>
+        </div>
     );
 }
 
