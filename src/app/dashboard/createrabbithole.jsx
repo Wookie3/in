@@ -141,9 +141,7 @@ export default function CreateRabbitholeForm({userprofileid}) {
     if (isSubmitted === false) {
       setisSubmitted(true);
     }
-
   }
-
 
   function displaySubmitbtn() {
 
