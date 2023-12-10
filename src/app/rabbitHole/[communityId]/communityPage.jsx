@@ -4,6 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import MembersList from "./membersList.jsx";
 import SubmitProposal from "./submitProposal.jsx";
+import RequesCarrots from "./requestCarrots.jsx";
 import { Carrot, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +76,7 @@ const CommunityPage = ({
       console.log("Error getting members data:", membersError);
     }
     if (membersData != null) {
-      console.log("membersData:", membersData);
+      // console.log("membersData:", membersData);
       return membersData;
     }
   }, [supabase]);
@@ -98,23 +99,36 @@ const CommunityPage = ({
     const members = membersArray.filter((member) => member.Profile !== null);
     if (members[0]) {
       if (members[0].Profile) {
-        console.log("You are a member of this community");
         return "hidden";
       }
     }
     return "";
   };
+
+  const adminRequestCarrots = (userId) => {
+    if (membersArray) {
+      console.log("membersArray page.jsx:", membersArray);
+      const members = membersArray.filter(
+        (membership) => membership.Profile?.user_id === user.id
+      );
+      if (members[0]) {
+      return members[0].is_damsire ? (<RequesCarrots userid={user.id} />) : 
+      (console.log("not admin(dam/sire)"));
+      }}
+  };
+
   useEffect(() => {
     getProposalData(rabbitholeId).then((proposal) => setProposalArray(proposal));
   }, [rabbitholeId, getProposalData]);
 
   useEffect(() => {
+    
     getMembershipData(rabbitholeId, user).then((membersData) => setMembersArray(membersData));
   }, [rabbitholeId, user, getMembershipData]);
 
 
   return (
-    <div>
+    <div className="flex justify-around flex-col p-6 gap-y-6">
       <Card className="">
         <CardHeader>
           <CardTitle>{communityData?.group_name}</CardTitle>
@@ -122,8 +136,8 @@ const CommunityPage = ({
         </CardHeader>
         <CardContent>
           <Badge className="px-4 py-1">
-            Carrot Pot: <Carrot className="w-5 h-5 stroke-0.25" />{" "}
-            {carrotPotData?.balance}{" "}
+            Carrot Pot: <Carrot className="w-5 h-5 stroke-0.25" />
+            {carrotPotData?.balance}
           </Badge>
 
           <TooltipProvider>
@@ -142,9 +156,10 @@ const CommunityPage = ({
         </CardContent>
         <CardFooter>
           <SubmitProposal profileId={profile.profile_id} />
+          {adminRequestCarrots(user.id)}
         </CardFooter>
       </Card>
-      <div className="flex ustify-between gap-3">
+      <div className="flex justify-around gap-2">
         <Card>
           <CardHeader>
             <CardTitle>Proposals</CardTitle>
@@ -156,7 +171,8 @@ const CommunityPage = ({
             <DataTable columns={columns} data={proposalArray} />
           </CardContent>
         </Card>
-        <div className="flex justify-self-end">
+        <div className="">
+
           <Card>
             <CardHeader>
               <CardTitle>Members</CardTitle>

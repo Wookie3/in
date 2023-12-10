@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import CommunityPage from "./communityPage.jsx";
-import RequesCarrots from "./requestCarrots.jsx";
 
 const Proposals = async ({ params }) => {
   const supabase = createServerComponentClient({ cookies });
@@ -15,14 +14,6 @@ const Proposals = async ({ params }) => {
     redirect("/login");
   }
   // Data fetching:
-  const { data: membershipData, error: membershipError } = await supabase
-    .from("Membership")
-    .select(`*, Profile (user_id)`)
-    .eq("rabbithole_id", params.communityId)
-    .eq("Profile.user_id", user.id);
-  if (membershipError) {
-    console.log("Error getting membership data", membershipError);
-  }
   const { data: communityData, error: communityError } = await supabase
     .from("Rabbit-hole")
     .select("*")
@@ -47,16 +38,6 @@ const Proposals = async ({ params }) => {
   if (profileError) {
     console.log("Error getting profile data", profileError);
   }
-  const adminRequestCarrots = () => {
-    if (membershipData) {
-      const members = membershipData.filter(
-        (membership) => membership.Profile?.user_id === user.id
-      );
-      if (members[0]) {
-      return members[0].is_damsire ? (<RequesCarrots userid={user.id} />) : 
-      (console.log("not admin(dam/sire)"));
-      }}
-  };
   return (
     <div>
       <CommunityPage
@@ -66,7 +47,6 @@ const Proposals = async ({ params }) => {
         profile={profileData}
       />
       <div className="flex items-center flex-col gap-4"></div>
-      {adminRequestCarrots(user.id)}
     </div>
   );
 };
