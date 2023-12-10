@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -39,11 +38,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { usePathname, useRouter } from "next/navigation";
-import { DatePicker } from "./datePicker";
 import { CalendarIcon } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 import { format } from "date-fns";
-import { createClient } from "@supabase/supabase-js";
 
 const formSchema = z.object({
   title: z.string().min(3, {
@@ -68,7 +65,7 @@ const formSchema = z.object({
   }),
 });
 
-const SubmitProposalForm = ({ userId }) => {
+const SubmitProposalForm = ({ profileId }) => {
   const router = useRouter();
   const supabase = createClientComponentClient();
   const pathname = usePathname();
@@ -98,11 +95,10 @@ const SubmitProposalForm = ({ userId }) => {
     //   .replace("T", " ")
     //   .replace(".", "+00")
     //   .slice(0, 22);
-
     const rewards = parseFloat(formdata.rewards);
     const effort = parseFloat(formdata.effort);
     const date = new Date().toISOString();
-  const rabbittHoleId = pathname.split("/")[2];
+
     const { error: insertError } = await supabase.from("Proposal").insert({
       create_at: date,
       update_at: date,
@@ -111,7 +107,7 @@ const SubmitProposalForm = ({ userId }) => {
       rewards: rewards,
       rabbithole_id: rabbittHoleId,
       title: formdata.title,
-      user_id: userId,
+      profile_id: profileId,
       effort: effort,
       status: "pending",
     });

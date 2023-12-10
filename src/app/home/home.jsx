@@ -75,7 +75,7 @@ const Main = ({
   <div
     key="registration-onboarding"
     className="relative circle-check custom-list"
-    whileHover={{
+    whilehover={{
       scale: 1.1,
       transition: {
         duration: 0.2,
@@ -89,7 +89,7 @@ const Main = ({
   <div
     key="dashboard"
     className="relative circle-check custom-list"
-    whileHover={{
+    whilehover={{
       scale: 1.1,
       transition: {
         duration: 0.2,
@@ -117,7 +117,7 @@ const Main = ({
   <div
     key="task-review-approval"
     className="relative circle-check custom-list"
-    whileHover={{
+    whilehover={{
       scale: 1.1,
       transition: {
         duration: 0.2,
@@ -131,7 +131,7 @@ const Main = ({
   <div
     key="reward-system-display"
     className="relative circle-check custom-list"
-    whileHover={{
+    whilehover={{
       scale: 1.1,
       transition: {
         duration: 0.2,
@@ -145,7 +145,7 @@ const Main = ({
   <div
     key="wallet-management"
     className="relative circle-check custom-list"
-    whileHover={{
+    whilehover={{
       scale: 1.1,
       transition: {
         duration: 0.2,
@@ -159,7 +159,7 @@ const Main = ({
   <div
     key="treasury-overview"
     className="relative circle-check custom-list"
-    whileHover={{
+    whilehover={{
       scale: 1.1,
       transition: {
         duration: 0.2,
