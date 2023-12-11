@@ -1,4 +1,4 @@
-
+/* File & Folder to Be Removed */
 
 import Link from "next/link";
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';

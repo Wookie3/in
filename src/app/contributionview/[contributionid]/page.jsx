@@ -64,6 +64,29 @@ const getValidations = async (supabase, contribution_id) => {
 }
 
 
+
+const getValidation_byuser = async (user, contribution_id, supabase) => {
+
+  const { data: validated, error: validatedError } = await supabase
+  .from('Validation')
+  .select(`*`)
+  .eq('profile_id', user.profile_id)
+  .eq('contribution_id', contribution_id)
+  .limit(1)
+
+  if (validatedError) {
+      console.error(validatedError)
+      throw validatedError;
+  }
+
+  return validated;
+}
+
+
+
+
+
+
 async function ContributionPage({ params }) {
 
   const supabase = createServerComponentClient({ cookies });
@@ -86,12 +109,15 @@ async function ContributionPage({ params }) {
   const userProfile = await getProfile(user, supabase);
   //console.log(userProfile);
 
+  const uservalidate = await getValidation_byuser(userProfile, contribution_id, supabase);
+  //console.log(uservalidate);
+
 
   return (
     <div>
       <h1>Contribution View Page</h1>
 
-        <Contributionview contribution={selectedContribution} validations={validations} userprofile={userProfile} />
+        <Contributionview contribution={selectedContribution} validations={validations} userprofile={userProfile} uservalidate={uservalidate}/>
 
     </div>
   );

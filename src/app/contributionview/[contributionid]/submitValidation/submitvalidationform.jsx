@@ -1,6 +1,8 @@
 'use client'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react';
 
 import {
   Dialog,
@@ -17,7 +19,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { useState } from "react"
 
 import Foragainstbtn from '@/components/for_againstbutton'
 
@@ -45,9 +46,36 @@ import Foragainstbtn from '@/components/for_againstbutton'
 //   } from "@/components/ui/card"
 
 
-export default function Validationform({userprofile, contributionid}) {
+
+const checkuservalidation = (uservalidate, set_hasuservalidated, set_isforstate, set_stake, set_review) => {
+    
+  if (uservalidate.length > 0) {
+      set_hasuservalidated(true);
+
+      set_isforstate(uservalidate[0].is_for);
+      set_stake(uservalidate[0].stake_amount);
+      set_review(uservalidate[0].review);
+  }
+  else {
+      set_hasuservalidated(false);
+
+      set_isforstate();
+      set_stake();
+
+  }
+}
+
+
+export default function Validationform({userprofile, contributionid, uservalidate}) {
 
   const supabase = createClientComponentClient();
+  const router = useRouter();
+
+  const [has_uservalidated, set_hasuservalidated] = useState(false);
+
+  useEffect(() => {
+    checkuservalidation(uservalidate, set_hasuservalidated, set_isforstate, set_stake, set_review);
+  }, [uservalidate, checkuservalidation])   
 
   const [isforstate, set_isforstate] = useState();
   const [stake, set_stake] = useState();
@@ -55,7 +83,6 @@ export default function Validationform({userprofile, contributionid}) {
 
   const [isSubmitted, setisSubmitted] = useState(false);
   const [isInvalid, setInValid] = useState(false);
-
 
   const handleValidate = async () => {
     let validate = {
@@ -66,8 +93,11 @@ export default function Validationform({userprofile, contributionid}) {
 
     let timestamp = new Date().toISOString();
     let profileid = userprofile.profile_id
+    
+    let reviewsize = (validate.userreview).length;
 
-    if ((validate.is_for === true || validate.is_for === false) && validate.stake_amount > 0) {
+
+    if ((validate.is_for === true || validate.is_for === false) && validate.stake_amount > 0 && reviewsize > 0 && isSubmitted === false) {
         
         const { data: newValidation, error: newValidationError } = await supabase
         .from('Validation')
@@ -89,12 +119,69 @@ export default function Validationform({userprofile, contributionid}) {
             setisSubmitted(true);
             setInValid(false);
         }
+
+        router.refresh();
     
     }
     else {
         console.log('Double Check your Entries')
         setInValid(true);
     }
+
+  }
+
+  const handleUpdateValidate = async () => {
+    let val_update = {
+      is_for: isforstate,
+      stake_amount: stake,
+      userreview: review,
+      id: uservalidate[0].validation_id
+    }
+
+    let reviewsize = (val_update.userreview).length;
+
+    if ((val_update.is_for === true || val_update.is_for === false) && val_update.stake_amount > 0 && reviewsize > 0) {
+
+      const { data: updateValidate, error: updateValidateError } = await supabase
+        .from('Validation')
+        .update({
+          is_for: val_update.is_for,
+          stake_amount: val_update.stake_amount,
+          review: val_update.userreview
+        })
+        .eq('validation_id', val_update.id)
+        .select()
+
+      if (updateValidateError) {
+        console.error(updateValidateError)
+        throw updateValidateError;
+      }
+
+      setInValid(false);
+      setisSubmitted(true);
+
+      router.refresh();
+
+    }
+    else {
+      setInValid(true);
+    }
+  }
+
+  const handleRemoveValidate = async () => {
+
+    const { error: deleteValidateError } = await supabase
+        .from('Validation')
+        .delete()
+        .eq('validation_id', uservalidate[0].validation_id)
+
+    if (deleteValidateError) {
+      console.error(deleteValidateError)
+      throw deleteValidateError;
+    }
+
+    setInValid(false);
+    setisSubmitted(true);
 
   }
 
@@ -106,9 +193,18 @@ export default function Validationform({userprofile, contributionid}) {
     );  
   }
 
+  function displayUpdate_Removebtn() {
+    return(
+      <div className="w-full flex justify-between">
+        <Button variant="outline" onClick={handleRemoveValidate}>Delete</Button>
+        <Button onClick={handleUpdateValidate}>Update</Button>      
+      </div>
+    );
+  }
+
   function displaySuccess() {
     return(
-      <span className="font-semibold">Successfully Created!</span>
+      <div className="font-semibold">Success!</div>
     );
   }
 
@@ -116,7 +212,9 @@ export default function Validationform({userprofile, contributionid}) {
       <Dialog>
         
         <DialogTrigger asChild>
-          <Button variant="outline">+ Submit a Validation</Button>
+          <Button>    
+            {has_uservalidated === true ? "+ Update your Validation" : "+ Submit a Validation"}
+          </Button>
         </DialogTrigger>
         
         <DialogContent className="md:max-w-[640px] max-h-80%">
@@ -132,7 +230,7 @@ export default function Validationform({userprofile, contributionid}) {
 
           <div className="grid gap-2">
             <Label htmlFor="review">Review</Label>
-            <Textarea id="review" placeholder="Type a small review here." onChange={(e) => set_review(e.target.value)} />
+            <Textarea id="review" placeholder="Type a small review here." defaultValue={review} onChange={(e) => set_review(e.target.value)} />
           </div>
           
           <div className="grid grid-cols-2 gap-6">
@@ -141,14 +239,17 @@ export default function Validationform({userprofile, contributionid}) {
 
           <div className="grid gap-2">
             <Label htmlFor="stake">Stake</Label>
-            <Input id="stake" type="number" placeholder="Amount" onChange={(e) => set_stake(e.target.value)} />
+            <Input id="stake" type="number" placeholder="Amount" defaultValue={stake} onChange={(e) => set_stake(e.target.value)} />
           </div>
           </div>
 
           
-          <DialogFooter> 
+          <DialogFooter className="flex flex-col"> 
             {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> }
-            { isSubmitted ? displaySuccess() : displaySubmitbtn() }
+            
+            {has_uservalidated === true ? displayUpdate_Removebtn() : displaySubmitbtn()}
+
+            {isSubmitted === true && displaySuccess() }
           </DialogFooter>         
         </DialogContent>
       </Dialog>

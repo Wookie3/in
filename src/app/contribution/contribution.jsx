@@ -1,3 +1,5 @@
+/* File & Folder to Be Removed */
+
 "use client";
 
 import React from 'react';

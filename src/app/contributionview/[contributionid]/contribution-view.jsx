@@ -40,7 +40,7 @@ import {
 
 
 // Main component for the Contribution View page
-export default function Contributionview({contribution, validations, userprofile}) {  // Change the component name to MyRenamedComponent
+export default function Contributionview({contribution, validations, userprofile, uservalidate}) {  // Change the component name to MyRenamedComponent
   
   // Create a Supabase client instance
   const supabase = createClientComponentClient();
@@ -108,7 +108,7 @@ export default function Contributionview({contribution, validations, userprofile
 
      {/*      <Prioritizationform userProfile={userProfile} proposerid={task.proposal_id} /> */}
           <div className="my-5">
-            <Validationform userprofile={userprofile} contributionid={contribution.contribution_id}/>
+            <Validationform userprofile={userprofile} contributionid={contribution.contribution_id} uservalidate={uservalidate}/>
           </div>
 
           <Card className="my-5">
