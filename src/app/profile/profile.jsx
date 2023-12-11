@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Carrot, RefreshCw } from "lucide-react";
-
+import { Carrot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
     Card,
@@ -13,13 +11,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { set } from "date-fns";
 
 const ProfilePage = (data) => {
-  const supabase = createClientComponentClient();
   const [Data, setData] = useState(data);
 
     // all data is in Data state (not deconstructed) ie:
