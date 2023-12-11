@@ -1,7 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import ProfilePage from './profile.js';
+import ProfilePage from './profile.jsx';
 
 
 const Profile = async () => {
@@ -13,6 +13,7 @@ const Profile = async () => {
     if (!user) {
         redirect('/login');
     }
+    // Fetch data
     const { data: profileData, error: profileError} = await supabase
         .from('Profile')
         .select('*')
