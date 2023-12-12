@@ -4,6 +4,7 @@
 
 import Link from 'next/link'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from "next/navigation";
 
 import {
     Card,
@@ -31,12 +32,34 @@ import Prioritizationform from "./Prioritization/prioritizationform.jsx"
 import { useEffect, useCallback, useState } from 'react'
 
 
-const Taskview_clientside = ({ userProfile, task, task_contributions }) => {
+const checkusercontribution = (usercontribution, set_hasusercontributed) => {
+    
+    if (usercontribution.length > 0) {
+        set_hasusercontributed(true);
+    }
+    else {
+        set_hasusercontributed(false)
+    }
+}
+
+
+
+const Taskview_clientside = ({ userProfile, task, task_contributions, usercontribution, userpriorize }) => {
 
     const supabase = createClientComponentClient();
+    const router = useRouter();
 
     const [proposer, setproposer] = useState();
+    const [has_usercontributed, set_hasusercontributed] = useState(false);
+    //const [has_userprioritized, set_userprioritized] = useState(false);
 
+    useEffect(() => {
+        checkusercontribution(usercontribution, set_hasusercontributed);
+      }, [usercontribution, checkusercontribution])
+
+ 
+
+   // console.log(has_userprioritized)
     const getProposer = useCallback(async (profileid) => {
         const { data: proposerData, error: proposerError } = await supabase
         .from('Profile')
@@ -56,6 +79,29 @@ const Taskview_clientside = ({ userProfile, task, task_contributions }) => {
     useEffect(() => {
         getProposer(task.profile_id, setproposer())
       }, [task.profile_id, getProposer])
+
+    
+    function displaySubmitbtn() {
+     
+        return (
+            <>
+                <Link href={`/taskview/${task.proposal_id}/contribution`}>
+                    <Button> Submit a Contribution </Button>
+                </Link>
+            </>
+        );
+    }
+
+    function displayViewbtn() {
+     
+        return (
+            <>
+                <Link href={`/contributionview/${usercontribution[0].contribution_id}`}>
+                    <Button> View your Contribution </Button>
+                </Link> 
+            </>
+        );
+    }
 
 
     return (
@@ -102,9 +148,7 @@ const Taskview_clientside = ({ userProfile, task, task_contributions }) => {
                         </CardContent>
 
                         <CardFooter className="flex justify-center">
-                            <Link href={`/contribution`}>
-                            <Button> Submit a Contribution </Button>
-                            </Link>
+                            {has_usercontributed ? displayViewbtn() : displaySubmitbtn() }
                         </CardFooter>
                     </Card>
 
@@ -123,8 +167,8 @@ const Taskview_clientside = ({ userProfile, task, task_contributions }) => {
 
                 <div className="col-span-2">
 
-                    <Prioritizationform userProfile={userProfile} proposerid={task.proposal_id}/>
-
+                    <Prioritizationform userProfile={userProfile} proposerid={task.proposal_id} userpriorize={userpriorize} />
+{/*                     has_userprioritized={has_userprioritized} */}
                     <Card className="my-5">
                         <CardHeader>
                             <CardTitle>Contributors</CardTitle>
@@ -136,20 +180,11 @@ const Taskview_clientside = ({ userProfile, task, task_contributions }) => {
                         </CardContent>
                     </Card>
 
-
-
-
-
                 </div>
-
-
-
 
             </div>
         </>
     );
-
-
 
 }
 export default Taskview_clientside;

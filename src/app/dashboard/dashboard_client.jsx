@@ -22,6 +22,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+
+import { Carrot } from 'lucide-react';
   
 /* import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -257,7 +259,6 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
         .select('prioritization_id, Proposal (proposal_id, title)')
         .eq('profile_id', userprofile.profile_id)
 
-        console.log(prioritizationlist)
 
         if (prioritizationlistError) {
             console.error(prioritizationlistError)
@@ -316,7 +317,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{`$ ${wallet_balance}`}</div>
+                        <div className="flex flex-row text-2xl font-bold"> <Carrot size={25} className="mr-2" /> {`${wallet_balance}`}</div>
                     </CardContent>
                 </Card>
             </div>

@@ -39,17 +39,10 @@ const getProposal = async (supabase, task_id) => {
         throw proposalError
     }
 
-    // if (proposal === null || proposal === undefined) {
-    //     return {
-    //         notFound: true, // triggers 404
-    //       };
-    // }
-
     if (proposal != null || proposal != undefined) {
         return proposal;
     }
-   // return proposal
-   
+
 }
 
 const getContributions = async (supabase, task_id) => {
@@ -67,6 +60,40 @@ const getContributions = async (supabase, task_id) => {
     return contributionStat;
 }
 
+const getContribution_byuser = async (user, task_id, supabase) => {
+
+    const { data: contributed, error: contributedError } = await supabase
+    .from('Contribution')
+    .select(`contribution_id`)
+    .eq('profile_id', user.profile_id)
+    .eq('proposal_id', task_id)
+    .limit(1)
+
+    if (contributedError) {
+        console.error(contributedError)
+        throw contributedError;
+    }
+
+    return contributed;
+
+}
+
+const getPrioritization_byuser = async (user, task_id, supabase) => {
+
+    const { data: prioritized, error: prioritizedError } = await supabase
+    .from('Prioritization')
+    .select(`*`)
+    .eq('profile_id', user.profile_id)
+    .eq('proposal_id', task_id)
+    .limit(1)
+
+    if (prioritizedError) {
+        console.error(prioritizedError)
+        throw prioritizedError;
+    }
+
+    return prioritized;
+}
 
 
 
@@ -84,18 +111,30 @@ const Taskview = async ({ params }) => {
     //check taskid exists in db 
 
     const selectedproposal = await getProposal(supabase, task_id);
-
-    console.log(selectedproposal);
+    //console.log(selectedproposal);
 
     const task_contributions = await getContributions(supabase, task_id);
-    console.log(task_contributions);
+    //console.log(task_contributions);
 
     const userProfile = await getProfile(user, supabase);
+   // console.log(userProfile);
+
+    const usercontribution = await getContribution_byuser(userProfile, task_id, supabase);
+   // console.log(usercontribution);
+
+    const userpriorize = await getPrioritization_byuser(userProfile, task_id, supabase);
+    //console.log(userpriorize);
 
     return (
 
         <>
-            <Taskview_clientside userProfile={userProfile} task={selectedproposal} task_contributions={task_contributions}/>
+            <Taskview_clientside 
+            userProfile={userProfile} 
+            task={selectedproposal} 
+            task_contributions={task_contributions} 
+            usercontribution={usercontribution}
+            userpriorize={userpriorize}
+            />
         </>
         
     )

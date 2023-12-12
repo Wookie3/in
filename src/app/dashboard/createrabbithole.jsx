@@ -160,7 +160,7 @@ export default function CreateRabbitholeForm({userprofileid}) {
       <Dialog >
         
         <DialogTrigger asChild>
-          <Button variant="outline">+ Create Rabbit-Hole</Button>
+          <Button>+ Create Rabbit-Hole</Button>
         </DialogTrigger>
         
         <DialogContent className="md:max-w-[640px] max-h-80%">

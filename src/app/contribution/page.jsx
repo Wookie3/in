@@ -1,13 +1,33 @@
+/* File & Folder to Be Removed */
 
+import Link from "next/link";
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { NextResponse } from 'next/server'
 
 import React from 'react';
 //import { useRouter } from 'next/navigation';
 
-import { ProfileForm } from './contribution';
+import Contributionform from './contribution';
 
-function ContributionPage() {
+
+
+
+
+async function Contributionsubmitpage({ params }) {
  // const router = useRouter();
   //console.log('Router:', router);
+  const supabase = createServerComponentClient({ cookies });
+  const {
+      data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+      redirect('/login');
+  }
+
 
   const taskData = {
     taskId: 123,
@@ -22,7 +42,7 @@ function ContributionPage() {
   return (
     <div>
       <h1>Contribution Page for {taskData.taskTitle}</h1>
-      <ProfileForm
+      <Contributionform
        
         taskTitle={taskData.taskTitle}
         taskReward={taskData.taskReward}
@@ -35,7 +55,7 @@ function ContributionPage() {
   );
 }
 
-export default ContributionPage;
+export default Contributionsubmitpage;
 
 
 
