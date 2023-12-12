@@ -69,22 +69,28 @@
 
 /* Orange theme */
 /* 
+oranges
 23, 50%, 14%
 24, 5%, 64%
 32, 98%, 83%
-    --card: 215, 35%, 75%;
 
+    --card: 215, 35%, 75%;
+blueish-gray light
+--card: 206 100% 93%;
+
+--card: 213, 27%, 84%;
 
 */
 @layer base {
   :root {
     --background: 0 0% 98%;
     --foreground: 20 14.3% 4.1%;
+    /* --card: 206 100% 93%; */
     --card: 213, 27%, 84%;
     --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 97%;
     --popover-foreground: 20 14.3% 4.1%;
-    --primary: 30 98% 6%;
+    --primary: 30 98% 50%;
     --primary-foreground: 60 9.1% 97.8%;
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
