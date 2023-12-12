@@ -11,6 +11,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const ProfilePage = (data) => {
   const [Data, setData] = useState(data);
@@ -41,23 +42,29 @@ const ProfilePage = (data) => {
         <div className="flex justify-center p-8">
             <Card className="max-w-lg bg-slate">
                 <CardHeader>
-                    <CardTitle>Profile</CardTitle>
-                    <CardDescription>Welcome back {Data.profileData?.username}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex justify-end px-6 pb-4">
+                    <div className="flex justify-between">
+                    <CardTitle>Profile</CardTitle><div className="flex justify-end px-6 pb-4">
                         <Badge className="px-4 py-1 gap-1.5">
                             Wallet: <Carrot className="w-5 h-5 stroke-0.25" />{Data.walletData?.balance}
                         </Badge>
                     </div>
+                    </div>
+                    <CardDescription>Welcome back {Data.profileData?.username}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {/* <div className="flex justify-end px-6 pb-4">
+                        <Badge className="px-4 py-1 gap-1.5">
+                            Wallet: <Carrot className="w-5 h-5 stroke-0.25" />{Data.walletData?.balance}
+                        </Badge>
+                    </div> */}
                     <div className="flex flex-col justify-self-center gap-y-3">
                         <p>Last Updated Profile: {formatDate(Data.profileData?.updated_at)} </p>
                         <p>Current Username: <Badge className='px-3 py-1 text-base' variant='outline'>{Data.profileData?.username}</Badge></p>
                         <p>Profile created: {formatDate(Data.profileData?.created_at)}</p>
                     </div>
                 </CardContent>
-                <CardFooter className="gap-2">
-                    <p>Account Status: {displayStatus()}</p>
+                <CardFooter className="gap-2 flex justify-between">
+                    <p>Account Status: {displayStatus()}</p><ModeToggle />
                     {/* <Switch
                         id="account-status"
                         checked={switchStatus}
