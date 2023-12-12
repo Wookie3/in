@@ -1,3 +1,5 @@
+/* File & Folder to Be Removed */
+
 "use client";
 
 import React from 'react';
@@ -25,7 +27,7 @@ const formSchema = z.object({
  
 });
 
-export function ProfileForm({ taskTitle, taskDescription, taskDeadline, taskReward, taskFile }) {
+export default function Contributionform({ taskTitle, taskDescription, taskDeadline, taskReward, taskFile }) {
 
   const supabase = createClientComponentClient();
 
