@@ -19,7 +19,7 @@ import Contributionview from './contribution-view.jsx';
 const getProfile = async (user, supabase) => {
   const { data: profileData, error: profileError } = await supabase
   .from('Profile')
-  .select(`profile_id, username`)
+  .select(`profile_id, username, Wallet (wallet_id, balance)`)
   .eq('user_id', user.id)
   .single()
 
@@ -115,7 +115,6 @@ async function ContributionPage({ params }) {
 
   return (
     <div>
-      <h1>Contribution View Page</h1>
 
         <Contributionview contribution={selectedContribution} validations={validations} userprofile={userProfile} uservalidate={uservalidate}/>
 

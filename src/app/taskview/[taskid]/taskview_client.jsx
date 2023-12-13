@@ -25,6 +25,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@radix-ui/react-dropdown-menu";
+import { useToast } from "@/components/ui/use-toast"
+
 
 import Contributionlist from './contributionlist.jsx';
 import Contributors from "./contributors.jsx";
@@ -42,12 +44,28 @@ const checkusercontribution = (usercontribution, set_hasusercontributed) => {
     }
 }
 
+const isUser_Proposer = (user_profileid, task, toast, router) => {
+
+    if (user_profileid === task.profile_id) {
+        
+        return(
+            toast({
+                title: "Uh oh! Something went wrong.",
+                description: "Your cannot submit a contribution to a proposal you created",
+              })
+        );
+    }
+
+    return router.push(`/taskview/${task.proposal_id}/contribution`);
+}
+
 
 
 const Taskview_clientside = ({ userProfile, task, task_contributions, usercontribution, userpriorize }) => {
 
     const supabase = createClientComponentClient();
     const router = useRouter();
+    const { toast } = useToast();
 
     const [proposer, setproposer] = useState();
     const [has_usercontributed, set_hasusercontributed] = useState(false);
@@ -80,15 +98,11 @@ const Taskview_clientside = ({ userProfile, task, task_contributions, usercontri
         getProposer(task.profile_id, setproposer())
       }, [task.profile_id, getProposer])
 
-    
+
     function displaySubmitbtn() {
      
         return (
-            <>
-                <Link href={`/taskview/${task.proposal_id}/contribution`}>
-                    <Button> Submit a Contribution </Button>
-                </Link>
-            </>
+            <Button onClick={() => isUser_Proposer(userProfile.profile_id, task, toast, router)}> Submit a Contribution </Button>
         );
     }
 
@@ -111,7 +125,13 @@ const Taskview_clientside = ({ userProfile, task, task_contributions, usercontri
                 <div className="col-span-4">
                     <Card className="my-5">
                         <CardHeader>
-                            <CardTitle>{`${task.title}`}</CardTitle>
+                            <div className="flex flex-row justify-between items-center">
+                                <CardTitle>{`${task.title}`}</CardTitle>
+
+                                <Link href={`/rabbitHole/${task.rabbithole_id}`}>
+                                    <Button variant="ghost"> Back to Rabbit-hole</Button>
+                                </Link>
+                            </div>
 
                             <div className="flex flex-row items-center gap-x-10">
                                 <CardDescription>
