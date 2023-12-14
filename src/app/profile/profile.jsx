@@ -78,21 +78,22 @@ const ProfilePage = ({ profileData, walletData }) => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col justify-self-center gap-y-3">
-            <p>Last Updated Profile: {formatDate(profileData?.updated_at)} </p>
-            <p>
+            <div>Last Updated Profile: {formatDate(profileData?.updated_at)} </div>
+            <div>
               Current Username:{" "}
               <Badge className="px-3 py-1 text-base" variant="outline">
                 {profileData?.username}
               </Badge>
-            </p>
-            <p>Profile created: {formatDate(profileData?.created_at)}</p>
-            <p>Account Status: {displayStatus()}</p>
+            </div>
+            <div>Profile created: {formatDate(profileData?.created_at)}</div>
+            <div>Account Status: {displayStatus()}</div>
           </div>
         </CardContent>
         <CardFooter className="gap-2 flex justify-between">
           <AlertDialog>
-            <AlertDialogTrigger>
-                <Button className="gap-1 p-2 "><Plus /><Carrot/></Button></AlertDialogTrigger>
+            <AlertDialogTrigger asChild>
+                  <Button className="gap-1 p-2 "><Plus /><Carrot/></Button>
+            </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Add Carrots</AlertDialogTitle>
