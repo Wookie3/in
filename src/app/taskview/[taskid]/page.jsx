@@ -10,11 +10,11 @@ import { NextResponse } from 'next/server'
 import Taskview_clientside from "./taskview_client";
 
 
-//Gets profile data for user
-const getProfile = async (user, supabase) => {
+//Gets profile & wallet data for user
+const getProfile_Wallet = async (user, supabase) => {
     const { data: profileData, error: profileError } = await supabase
     .from('Profile')
-    .select(`profile_id, username`)
+    .select(`profile_id, username, Wallet (wallet_id, balance)`)
     .eq('user_id', user.id)
     .single()
 
@@ -30,7 +30,7 @@ const getProposal = async (supabase, task_id) => {
 
     const { data: proposal, error: proposalError } = await supabase
         .from('Proposal')
-        .select(`proposal_id, create_at, update_at, description, deadline, rewards, title, effort, status, profile_id`)
+        .select(`proposal_id, create_at, update_at, description, deadline, rewards, title, effort, status, profile_id, rabbithole_id`)
         .eq('proposal_id', task_id)
         .single()
 
@@ -116,8 +116,8 @@ const Taskview = async ({ params }) => {
     const task_contributions = await getContributions(supabase, task_id);
     //console.log(task_contributions);
 
-    const userProfile = await getProfile(user, supabase);
-   // console.log(userProfile);
+    const userProfile = await getProfile_Wallet(user, supabase);
+    //console.log(userProfile);
 
     const usercontribution = await getContribution_byuser(userProfile, task_id, supabase);
    // console.log(usercontribution);

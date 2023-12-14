@@ -36,15 +36,24 @@ import {
 
 
 
-
-
-
 // Main component for the Contribution View page
 export default function Contributionview({contribution, validations, userprofile, uservalidate}) {  // Change the component name to MyRenamedComponent
   
   // Create a Supabase client instance
   const supabase = createClientComponentClient();
-  
+
+  const [User_isContributor, set_UserisContributor] = useState();
+
+  //Check if user created contributor so they cannot validate it as well
+  useEffect(() => {
+      if (userprofile.profile_id === contribution.Profile.profile_id) {
+        set_UserisContributor(true);
+      }
+      else
+      {
+        set_UserisContributor(false);
+      }
+  },[])
 
 
   return (
@@ -55,7 +64,13 @@ export default function Contributionview({contribution, validations, userprofile
         <div className="col-span-4">
           <Card className="my-5">
             <CardHeader>
-              <CardTitle>{`${contribution.title}`}</CardTitle>
+              <div className="flex flex-row justify-between items-center">
+                <CardTitle>{`${contribution.title}`}</CardTitle>
+
+                <Link href={`/taskview/${contribution.Proposal.proposal_id}`}>
+                  <Button variant="ghost"> Back to Proposal</Button>
+                </Link>
+              </div>
 
               <div className="flex flex-row items-center gap-x-10">
                 <CardDescription>
@@ -81,10 +96,8 @@ export default function Contributionview({contribution, validations, userprofile
 
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-base font-medium leading-6 text-gray-900">Proposal</dt>
-                  <dd className="mt-1 text-sm leading-6 text-blue-700 sm:col-span-2 sm:mt-0">
-                    <Link href={`/taskview/${contribution.Proposal.proposal_id}`}>
+                  <dd className="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                     {`${contribution.Proposal.title}`}
-                    </Link>
                   </dd>
                 </div>
               </dl>
@@ -106,10 +119,11 @@ export default function Contributionview({contribution, validations, userprofile
 
         <div className="col-span-2">
 
-     {/*      <Prioritizationform userProfile={userProfile} proposerid={task.proposal_id} /> */}
-          <div className="my-5">
-            <Validationform userprofile={userprofile} contributionid={contribution.contribution_id} uservalidate={uservalidate}/>
-          </div>
+          {!User_isContributor &&
+            <div className="my-5">
+              <Validationform userprofile={userprofile} contributionid={contribution.contribution_id} uservalidate={uservalidate} />
+            </div>
+          }
 
           <Card className="my-5">
             <CardHeader>
