@@ -116,6 +116,11 @@ export default function Validationform({userprofile, contributionid, uservalidat
   //console.log(userprofile.Wallet[0])
   //console.log(uservalidate)
 
+  // console.log(`stake: ${stake}`);
+  // console.log(`review: ${review}`);
+  // console.log(`forstate: ${isforstate}`);
+  // console.log(`has_validated: ${has_uservalidated}`);
+
   const handleValidate = async () => {
     let validate = {
       is_for: isforstate,
@@ -124,15 +129,16 @@ export default function Validationform({userprofile, contributionid, uservalidat
     }
 
     let timestamp = new Date().toISOString();
-    let profileid = userprofile.profile_id
+    let profileid = userprofile.profile_id;
     
-    let reviewsize = (validate.userreview).length;
+    let reviewsize = (validate.userreview)?.length;
 
     let balanceDetails = {
       userwalletid: userprofile.Wallet[0].wallet_id,
       userwalletbalance: userprofile.Wallet[0].balance,
       prevStake: 0,
     }
+
 
     if (validate.stake_amount > balanceDetails.userwalletbalance) {
 
@@ -162,20 +168,19 @@ export default function Validationform({userprofile, contributionid, uservalidat
 
         updateWalletbalance(balanceDetails, validate.stake_amount, supabase);
 
-        if (isSubmitted === false) {
-          setisSubmitted(true);
-          setInValid(false);
-        }
-
-        router.refresh();
+        displaySuccess();
+        setisSubmitted(true);
+        setInValid(false);
 
       }
       else {
-        console.log('Double Check your Entries')
+        //console.log('Double Check your Entries')
+        displayInvalidEntry();
         setInValid(true);
       }
-    }
 
+      router.refresh();
+    }
   }
 
   const handleUpdateValidate = async () => {
@@ -220,16 +225,17 @@ export default function Validationform({userprofile, contributionid, uservalidat
         }
 
         updateWalletbalance(balanceDetails, val_update.stake_amount, supabase);
-
+        displaySuccess();
         setInValid(false);
         setisSubmitted(true);
 
-        router.refresh();
-
       }
       else {
+        displayInvalidEntry();
         setInValid(true);
       }
+
+      router.refresh();
     }
   }
 
@@ -255,8 +261,14 @@ export default function Validationform({userprofile, contributionid, uservalidat
 
     updateWalletbalance(balanceDetails, addedStake, supabase);
 
+    displayRemoveSuccess();
+
+    set_isforstate(null);
+    set_stake(null);
+    set_review(null);
+
     setInValid(false);
-    setisSubmitted(true);
+    setisSubmitted(false);
 
     router.refresh();
 
@@ -277,22 +289,44 @@ export default function Validationform({userprofile, contributionid, uservalidat
   function displaySubmitbtn() {
 
     return(
-      <Button onClick={handleValidate}>Submit</Button>
+      <Button onClick={() => handleValidate()}>Submit</Button>
     );  
   }
 
   function displayUpdate_Removebtn() {
     return(
       <div className="w-full flex justify-between">
-        <Button variant="outline" onClick={handleRemoveValidate}>Delete</Button>
-        <Button onClick={handleUpdateValidate}>Update</Button>      
+        <Button variant="outline" onClick={() => handleRemoveValidate()}>Delete</Button>
+        <Button onClick={() => handleUpdateValidate()}>Update</Button>      
       </div>
     );
   }
 
   function displaySuccess() {
     return(
-      <div className="font-semibold">Success!</div>
+      // <div className="font-semibold">Success!</div>
+      toast({
+        description: `Successfully Validated!` 
+      })
+    );
+  }
+
+  function displayRemoveSuccess() {
+
+    return (
+      toast({
+        description: `Successfully Deleted` 
+      })
+    );
+  }
+
+  function displayInvalidEntry() {
+    return(
+      toast({
+        variant: "destructive",
+        title: "Double Check your Entries",
+        description: 'Review validation form' 
+      })
     );
   }
 
@@ -333,11 +367,11 @@ export default function Validationform({userprofile, contributionid, uservalidat
 
           
           <DialogFooter className="flex flex-col"> 
-            {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> }
+            {/* {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> } */}
             
             {has_uservalidated === true ? displayUpdate_Removebtn() : displaySubmitbtn()}
 
-            {isSubmitted === true && displaySuccess() }
+            {/* {isSubmitted === true && displaySuccess() } */}
           </DialogFooter>         
         </DialogContent>
       </Dialog>

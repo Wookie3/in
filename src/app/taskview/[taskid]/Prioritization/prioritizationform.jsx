@@ -76,6 +76,7 @@ const updateWalletbalance = async (balanceDetails, newStake, supabase) => {
   console.error(updateWalletError)
   throw updateWalletError;
   }
+
 }
 
 
@@ -87,6 +88,7 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
     const { toast } = useToast();
 
     const [has_userprioritized, set_userprioritized] = useState(false);
+    //const [currentwalletbalance, set_currentwalletbalance] = useState(userProfile.Wallet[0].balance);
 
     useEffect(() => {
       checkuserprioritization(userpriorize, set_userprioritized, set_isforstate, set_stake);
@@ -101,6 +103,8 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
     //console.log(userProfile)
     //console.log(userProfile.Wallet[0])
     //console.log(userpriorize)
+    // console.log(has_userprioritized);
+    // console.log(stake);
 
 
   const handlePrioritize = async () => {
@@ -145,16 +149,17 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
         }
 
         updateWalletbalance(balanceDetails, prioritize.stake_amount, supabase);
-
+        displaySuccess();
         setInValid(false);
         set_isSubmitted(true);
 
-        router.refresh();
-
       }
       else {
+        displayInvalidEntry();
         setInValid(true);
       }
+      
+      router.refresh();
     }
   }
 
@@ -201,6 +206,7 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
 
       }
       else {
+        displayInvalidEntry();
         setInValid(true);
       }
 
@@ -230,10 +236,16 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
       throw deletePrioritizeError;
     }
 
+
     updateWalletbalance(balanceDetails, addedStake, supabase);
 
+    displayRemoveSuccess();
+
+    set_isforstate(null);
+    set_stake(null);
+
     setInValid(false);
-    set_isSubmitted(true);
+    set_isSubmitted(false);
 
     router.refresh();
   }
@@ -251,7 +263,7 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
 
   function displaySubmitbtn() {
     return(
-      <Button className="w-full" onClick={handlePrioritize}>Prioritize</Button>
+      <Button className="w-full" onClick={() => handlePrioritize()}>Prioritize</Button>
     );
   }
 
@@ -259,7 +271,7 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
     return(
       <div className="w-full flex justify-between">
         <Button onClick={() => handleUpdatePrioritize()}>Update</Button>      
-        <Button variant="outline" onClick={handleRemovePrioritize}>Delete</Button>
+        <Button variant="outline" onClick={() => handleRemovePrioritize()}>Delete</Button>
       </div>
     );
   }
@@ -269,7 +281,28 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
       // <span className="font-semibold mt-2">Success!</span>
 
       toast({
-        description: `Success!` 
+        description: `Successfully Prioritized!` 
+      })
+    );
+  }
+
+  function displayRemoveSuccess() {
+
+    return (
+      // <span className="font-semibold mt-2">Success!</span>
+
+      toast({
+        description: `Successfully Deleted` 
+      })
+    );
+  }
+
+  function displayInvalidEntry() {
+    return(
+      toast({
+        variant: "destructive",
+        title: "Double Check your Entries",
+        description: 'Review prioritization form' 
       })
     );
   }
@@ -296,7 +329,7 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
         </CardContent>
 
         <CardFooter className="flex flex-col">
-          {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> }
+         {/*  {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> } */}
 
           {has_userprioritized === true ? displayUpdate_Removebtn() : displaySubmitbtn()}
 

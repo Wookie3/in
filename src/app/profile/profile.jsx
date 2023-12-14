@@ -92,7 +92,7 @@ const ProfilePage = ({ profileData, walletData }) => {
         <CardFooter className="gap-2 flex justify-between">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-                  <Button className="gap-1 p-2 "><Plus /><Carrot/></Button>
+                <Button className="gap-1 p-2 "><Plus /><Carrot/></Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
