@@ -11,10 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { reportProposal } from "./clientDataCalls.js";
 
-// import { useCallback, useState, useEffect } from "react";
-// import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 // export type Payment = {
 //   id: string
 //   amount: number
@@ -133,9 +130,9 @@ export const columns = [
               <Link href={link}>View proposal details</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => alert("Not implemented")}>
-              Prioritize Proposal
-            </DropdownMenuItem>
+            {/* <DropdownMenuItem variant="distructive" onClick={() => handleDeleteProposal(proposal.proposal_id)}>
+              Delete Proposal
+            </DropdownMenuItem> */}
             <DropdownMenuItem
               onClick={() =>
                 navigator.clipboard.writeText(
@@ -151,20 +148,6 @@ Effort: ${proposal.effort}`
             >
               Copy to clipboard
             </DropdownMenuItem>
-            {/* <DropdownMenuItem>
-              <Button
-                variant="seconday"
-                className="w-full"
-                onClick={() => alert("Not implemented")}
-              >
-                Edit
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Button variant="destructive" className='w-full' onClick={() => reportProposal(proposal.proposal_id)} >
-                Report Proposal
-                </Button>
-            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       );
