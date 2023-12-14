@@ -26,7 +26,7 @@ const Profile = async () => {
 
     const { data: walletData, error: walletError } = await supabase
         .from('Wallet')
-        .select('balance')
+        .select('balance, wallet_id')
         .eq(`profile_id`, profileData.profile_id)
         .single();
 
