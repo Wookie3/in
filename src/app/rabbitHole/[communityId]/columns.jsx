@@ -1,5 +1,6 @@
-"use client";
-// import Link from "next/link";
+"use client"
+
+import Link from "next/link";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRouter } from "next/navigation";
 import { ClipboardCopy, View, Carrot } from "lucide-react";
 
 
@@ -131,20 +131,21 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const router = useRouter();
       const proposal = row.original;
       const taskLink = `/taskview/${proposal.proposal_id}`;
       return (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
+              <Link href={taskLink}>
               <Button
                 className="p-2"
                 variant="ghost"
-                onClick={() => router.push(taskLink)}
+                // onClick={() => router.push(taskLink)}
               >
                 <View />
               </Button>
+              </Link>
             </TooltipTrigger>
             <TooltipContent>
               <div>View proposal</div>
