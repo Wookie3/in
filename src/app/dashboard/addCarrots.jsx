@@ -19,15 +19,23 @@ import { Carrot } from "lucide-react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast"
+
 
 const AddCarrots = (walletData) => {
   const [amount, setAmount] = useState(0);
   const router = useRouter();
+  const { toast } = useToast();
   const updateWallet = async () => {
     const supabase = createClientComponentClient();
     const newBalance = walletData.walletData?.balance + parseInt(amount);
     if (newBalance < 0) {
-      console.log("Wallet funds cannot fall below zero.");
+      toast({
+        variant: "destructive",
+        title: "Error removing funds",
+        description: "Your wallet balance cannot fall below zero.",
+      })
+      // console.log("Wallet funds cannot fall below zero.");
       return;
     }
     const { error: updateError } = await supabase

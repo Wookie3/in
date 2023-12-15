@@ -74,12 +74,10 @@ oranges
 24, 5%, 64%
 32, 98%, 83%
 
-    --card: 215, 35%, 75%;
+--card: 215, 35%, 75%;
 blueish-gray light
 --card: 206 100% 93%;
-
 --card: 213, 27%, 84%;
-
 */
 @layer base {
   :root {

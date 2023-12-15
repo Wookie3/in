@@ -99,20 +99,20 @@ const CommunityPage = ({ communityData, user, carrotPotData, profile }) => {
       });
     }
   };
-const leaveGroup = async () => {
-  const { error: leaveError } = await supabase
-    .from("Membership")
-    .delete()
-    .eq("profile_id", profile.profile_id)
-    .eq("rabbithole_id", communityData.rabbithole_id);
-  if (leaveError) {
-    console.log("Error leaving group: ", leaveError);
-  }
-  toast({
-    title: "Goodbye!",
-    description: "You have left the community.",
-  });
-};
+  const leaveGroup = async () => {
+    const { error: leaveError } = await supabase
+      .from("Membership")
+      .delete()
+      .eq("profile_id", profile.profile_id)
+      .eq("rabbithole_id", communityData.rabbithole_id);
+    if (leaveError) {
+      console.log("Error leaving group: ", leaveError);
+    }
+    toast({
+      title: "Goodbye!",
+      description: "You have left the community.",
+    });
+  };
 
   const isMember = () => {
     const members = membersArray.filter((member) => member.Profile !== null);
@@ -129,12 +129,12 @@ const leaveGroup = async () => {
     }
     return "";
   };
-    const hideLeave = () => {
-      if (isMember()) {
-        return "";
-      }
-      return "hidden";
-    };
+  const hideLeave = () => {
+    if (isMember()) {
+      return "";
+    }
+    return "hidden";
+  };
   const adminRequestCarrots = (userId) => {
     if (membersArray) {
       // console.log("membersArray page.jsx:", membersArray);
@@ -164,43 +164,42 @@ const leaveGroup = async () => {
   }, [rabbitholeId, user, getMembershipData]);
 
   return (
-    <div className="flex justify-around flex-col p-6 gap-y-6">
-      <Card className="max-w-3xl ">
-        <CardHeader>
-          <div className="flex justify-between">
-          <CardTitle>{communityData?.group_name} 
-          </CardTitle><Badge className="px-6 py-2 text-base gap-1 ">
-            Carrot Pot:  <Carrot className="w-5 h-5 stroke-0.25" />
-            {carrotPotData?.balance}
-          </Badge>
-          </div>
-          <CardDescription>{communityData?.description}</CardDescription>
-          <Separator/>
-        </CardHeader>
-        <CardContent className={"flex justify-evenly gap-4"}>
-          <div className="gap-4 flex justify-between">
-          <SubmitProposal profileId={profile.profile_id} />
-          {adminRequestCarrots(user.id)}
-          <TooltipProvider>
-            {/* Refresh Button */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" onClick={() => router.refresh()}>
-                  <RefreshCw />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Refresh Page</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          </div>
-        </CardContent>
-        <CardFooter>
-          Footer
-        </CardFooter>
-      </Card>
-      <div className="flex justify-around gap-2">
+    <div className="flex flex-col p-6 gap-y-6">
+      <div className="flex justify-center gap-6">
+        <Card className="w-full max-w-2xl">
+          <CardHeader>
+            <div className="flex justify-between">
+              <CardTitle>{communityData?.group_name}</CardTitle>
+              <Badge className="px-6 py-2 text-base gap-1 ">
+                Carrot Pot: <Carrot className="w-5 h-5 stroke-0.25" />
+                {carrotPotData?.balance}
+              </Badge>
+            </div>
+            <CardDescription>{communityData?.description}</CardDescription>
+            <Separator />
+          </CardHeader>
+          <CardContent className={"flex justify-evenly gap-4"}>
+            <div className="gap-4 flex justify-between">
+              <SubmitProposal profileId={profile.profile_id} />
+              {adminRequestCarrots(user.id)}
+              <TooltipProvider>
+                {/* Refresh Button */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" onClick={() => router.refresh()}>
+                      <RefreshCw />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Refresh Page</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="flex justify-around gap-2 sm: flex-col md:flex-col lg: flex-row xl:flex-row">
         <Card>
           <CardHeader>
             <CardTitle>Proposals</CardTitle>

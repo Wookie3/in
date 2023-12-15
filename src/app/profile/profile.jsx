@@ -28,7 +28,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import next from "next";
+import { useToast } from "@/components/ui/use-toast"
+
 // import AddCarrots from "./addCarrots";
 
 
@@ -36,17 +37,24 @@ const ProfilePage = ({ profileData, walletData }) => {
   const supabase = createClientComponentClient();
   const [amount, setAmount] = useState(0);
   const router = useRouter();
+  const { toast } = useToast();
   const formatDate = (date) => {
     const d = new Date(date);
     return d.toLocaleString();
   };
   const displayStatus = () => {
-    return profileData?.is_active ? "Active" : "Inactive";
+    return profileData?.is_active ?
+    <Badge className={"bg-green-500 hover:bg-green-500/80 text-secondary-foreground"}>Active</Badge> :
+    <Badge variant={"destructive"}>Inactive</Badge>
   };
   const updateWallet = async (walletData, amount) => {
     const newBalance = walletData?.balance + parseInt(amount);
     if (newBalance < 0) {
-      console.log("Wallet funds cannot fall below zero.");
+      toast({
+        variant: "destructive",
+        title: "Error removing funds",
+        description: "Your wallet balance cannot fall below zero.",
+      })
       return;
     }
     const { error: updateError } = await supabase
@@ -62,7 +70,7 @@ const ProfilePage = ({ profileData, walletData }) => {
   };
   return (
     <div className="flex justify-center p-8">
-      <Card className="max-w-lg bg-slate">
+      <Card className="max-w-lg">
         <CardHeader>
           <div className="flex justify-between">
             <CardTitle>Profile</CardTitle>
@@ -79,15 +87,15 @@ const ProfilePage = ({ profileData, walletData }) => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col justify-self-center gap-y-3">
-            <div>Last Updated Profile: {formatDate(profileData?.updated_at)} </div>
-            <div>
-              Current Username:{" "}
-              <Badge className="px-3 py-1 text-base" variant="outline">
+            <div className="gap-2">
+              Username:
+              <Badge className="px-3 py-1 text-base" variant="secondary">
                 {profileData?.username}
               </Badge>
             </div>
             <div>Profile created: {formatDate(profileData?.created_at)}</div>
             <div>Account Status: {displayStatus()}</div>
+            <div>Last Updated Profile: {formatDate(profileData?.updated_at)} </div>
           </div>
         </CardContent>
         <CardFooter className="gap-2 flex justify-between">
