@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import next from "next";
+// import AddCarrots from "./addCarrots";
 
 
 const ProfilePage = ({ profileData, walletData }) => {

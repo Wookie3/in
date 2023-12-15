@@ -32,7 +32,7 @@ const getMembershipData = useCallback(async (path) => {
     <div key={member.membership_id} className="pt-4 hover:bg-orange-50">
       
       <div className="px-1 text-base font-semibold flex justify-center">
-        <Badge>{member.Profile.username}</Badge>
+        <Badge className={"px-5 py-1 text-sm"}>{member.Profile.username}</Badge>
       </div>
       <Separator className="mt-4" />
     </div>
