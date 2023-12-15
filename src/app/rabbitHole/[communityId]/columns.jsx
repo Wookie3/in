@@ -155,40 +155,40 @@ export const columns = [
       );
     },
   },
-//   {
-//     id: "actions",
-//     cell: ({ row }) => {
-//       const proposal = row.original;
-//       return (
-//         <div className="">
-//         <TooltipProvider>
-//           <Tooltip>
-//             <TooltipTrigger>
-//               <Button
-//                 className="p-2"
-//                 variant="ghost"
-//                 onClick={() =>
-//                   navigator.clipboard.writeText(
-//                     `Title: ${proposal.title},
-// Description: ${proposal.description},
-// ID: ${proposal.proposal_id},
-// Reward: ${proposal.rewards},
-// Status: ${proposal.status},
-// Deadline: ${proposal.deadline},
-// Effort: ${proposal.effort}`
-//                   )
-//                 }
-//               >
-//                 <ClipboardCopy />
-//               </Button>
-//             </TooltipTrigger>
-//             <TooltipContent>
-//               <div>Copy to clipboard</div>
-//             </TooltipContent>
-//           </Tooltip>
-//         </TooltipProvider>
-//         </div>
-//       );
-//     },
-//   },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const proposal = row.original;
+      return (
+        <div className="">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                className="p-2"
+                variant="ghost"
+                onClick={() =>
+                  navigator.clipboard.writeText(
+                    `Title: ${proposal.title},
+Description: ${proposal.description},
+ID: ${proposal.proposal_id},
+Reward: ${proposal.rewards},
+Status: ${proposal.status},
+Deadline: ${proposal.deadline},
+Effort: ${proposal.effort}`
+                  )
+                }
+              >
+                <ClipboardCopy />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div>Copy to clipboard</div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        </div>
+      );
+    },
+  },
 ];
