@@ -12,14 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// export type Payment = {
-//   id: string
-//   amount: number
-//   status: "pending" | "processing" | "success" | "failed" | "reported"
-//   email: string
-// }
- 
-// export const columns: ColumnDef<Payment>[] = [
+
 export const columns = [
   {
     accessorKey: "title",
