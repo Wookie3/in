@@ -129,7 +129,7 @@ export const columns = [
     },
   },
   {
-    id: "actions",
+    id: "view",
     cell: ({ row }) => {
       const proposal = row.original;
       const taskLink = `/taskview/${proposal.proposal_id}`;
@@ -156,7 +156,7 @@ export const columns = [
     },
   },
   {
-    id: "actions",
+    id: "copy",
     cell: ({ row }) => {
       const proposal = row.original;
       return (
