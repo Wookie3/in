@@ -1,16 +1,16 @@
 "use client";
-import Link from "next/link";
+// import Link from "next/link";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
+import { ClipboardCopy, View, Carrot } from "lucide-react";
 
 
 export const columns = [
@@ -58,7 +58,20 @@ export const columns = [
   {
     accessorKey: "effort",
     header: "Effort",
-    header: () => <div className="text-right">Effort</div>,
+    header: () => {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="text-right">Effort</div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Time in hours</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    },
     cell: ({ row }) => {
       const effort = row.getValue("effort");
       return <div className="text-right font-medium">{effort}</div>;
@@ -82,15 +95,26 @@ export const columns = [
     header: "Rewards",
     header: ({ column }) => {
       return (
-        <div className="text-right">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Rewards
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="text-left">
+                <Button
+                  variant="ghost"
+                  onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === "asc")
+                  }
+                >
+                  <Carrot />
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Rewards</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       );
     },
     cell: ({ row }) => {
@@ -107,43 +131,63 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const router = useRouter();
       const proposal = row.original;
-      const link = `/taskview/${proposal.proposal_id}`;
+      const taskLink = `/taskview/${proposal.proposal_id}`;
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* <DropdownMenuLabel>Options</DropdownMenuLabel> */}
-            <DropdownMenuItem>
-              <Link href={link}>View proposal details</Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {/* <DropdownMenuItem variant="distructive" onClick={() => handleDeleteProposal(proposal.proposal_id)}>
-              Delete Proposal
-            </DropdownMenuItem> */}
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  `Title: ${proposal.title},
-Description: ${proposal.description},
-ID: ${proposal.proposal_id},
-Reward: ${proposal.rewards},
-Status: ${proposal.status},
-Deadline: ${proposal.deadline},
-Effort: ${proposal.effort}`
-                )
-              }
-            >
-              Copy to clipboard
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                className="p-2"
+                variant="ghost"
+                onClick={() => router.push(taskLink)}
+              >
+                <View />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div>View proposal</div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       );
     },
   },
+//   {
+//     id: "actions",
+//     cell: ({ row }) => {
+//       const proposal = row.original;
+//       return (
+//         <div className="">
+//         <TooltipProvider>
+//           <Tooltip>
+//             <TooltipTrigger>
+//               <Button
+//                 className="p-2"
+//                 variant="ghost"
+//                 onClick={() =>
+//                   navigator.clipboard.writeText(
+//                     `Title: ${proposal.title},
+// Description: ${proposal.description},
+// ID: ${proposal.proposal_id},
+// Reward: ${proposal.rewards},
+// Status: ${proposal.status},
+// Deadline: ${proposal.deadline},
+// Effort: ${proposal.effort}`
+//                   )
+//                 }
+//               >
+//                 <ClipboardCopy />
+//               </Button>
+//             </TooltipTrigger>
+//             <TooltipContent>
+//               <div>Copy to clipboard</div>
+//             </TooltipContent>
+//           </Tooltip>
+//         </TooltipProvider>
+//         </div>
+//       );
+//     },
+//   },
 ];

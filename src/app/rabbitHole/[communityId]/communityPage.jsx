@@ -46,6 +46,8 @@ const CommunityPage = ({ communityData, user, carrotPotData, profile }) => {
   const rabbitholeId = path.split("/")[2];
   const [proposalArray, setProposalArray] = useState([]);
   const [membersArray, setMembersArray] = useState([]);
+  // const [displayJoin, setDisplayJoin] = useState(false);
+  // const [displayLeave, setDisplayLeave] = useState(false);
   const { toast } = useToast();
 
   const getProposalData = useCallback(
@@ -199,7 +201,7 @@ const CommunityPage = ({ communityData, user, carrotPotData, profile }) => {
           </CardContent>
         </Card>
       </div>
-      <div className="flex justify-around gap-2 sm: flex-col md:flex-col lg: flex-row xl:flex-row">
+      <div className="flex justify-around gap-2 sm: flex-col md:flex-col lg:flex-row xl:flex-row">
         <Card>
           <CardHeader>
             <CardTitle>Proposals</CardTitle>

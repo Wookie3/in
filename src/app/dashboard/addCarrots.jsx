@@ -29,6 +29,7 @@ const AddCarrots = (walletData) => {
   const updateWallet = async () => {
     const supabase = createClientComponentClient();
     const newBalance = walletData.walletData?.balance + parseInt(amount);
+
     if (newBalance < 0) {
       toast({
         variant: "destructive",
@@ -38,6 +39,7 @@ const AddCarrots = (walletData) => {
       // console.log("Wallet funds cannot fall below zero.");
       return;
     }
+
     const { error: updateError } = await supabase
       .from("Wallet")
       .update({ balance: newBalance })
