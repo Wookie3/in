@@ -1,7 +1,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from "next/navigation";
 
@@ -17,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
+
 
 import Foragainstbtn from "@/components/for_againstbutton";
 
@@ -30,7 +32,9 @@ import {
     FormMessage,
   } from "@/components/ui/form"
 
+  
 
+//Checks for user's priorization and fills data
 const checkuserprioritization = (userpriorize, set_userprioritized, set_isforstate, set_stake) => {
     
     if (userpriorize.length > 0) {
@@ -48,23 +52,60 @@ const checkuserprioritization = (userpriorize, set_userprioritized, set_isforsta
     }
 }
 
+//Calculates new balance of user's wallet
+const calculateBalance = (balanceDetails, newStake) => {
+
+  return balanceDetails.userwalletbalance + balanceDetails.prevStake - newStake;
+
+}
+
+//Updates user's wallet balance
+const updateWalletbalance = async (balanceDetails, newStake, supabase) => {
+
+  let newbalance = calculateBalance(balanceDetails, newStake);
+
+  const { data: updateWallet, error: updateWalletError } = await supabase
+  .from('Wallet')
+  .update({
+    balance: newbalance,
+  })
+  .eq('wallet_id', balanceDetails.userwalletid)
+  .select()
+
+  if (updateWalletError) {
+  console.error(updateWalletError)
+  throw updateWalletError;
+  }
+
+}
+
+
 
 export default function Prioritizationform( {userProfile, proposerid, userpriorize}) {
 
     const supabase = createClientComponentClient();
     const router = useRouter();
+    const { toast } = useToast();
 
     const [has_userprioritized, set_userprioritized] = useState(false);
+    //const [currentwalletbalance, set_currentwalletbalance] = useState(userProfile.Wallet[0].balance);
 
     useEffect(() => {
       checkuserprioritization(userpriorize, set_userprioritized, set_isforstate, set_stake);
-    }, [userpriorize, checkuserprioritization])   
-
+    }, [userpriorize, checkuserprioritization])  
+  
     const [isforstate, set_isforstate] = useState();
     const [stake, set_stake] = useState();
 
     const [isInvalid, setInValid] = useState(false);
     const [isSubmitted, set_isSubmitted] = useState(false);
+
+    //console.log(userProfile)
+    //console.log(userProfile.Wallet[0])
+    //console.log(userpriorize)
+    // console.log(has_userprioritized);
+    // console.log(stake);
+
 
   const handlePrioritize = async () => {
     let prioritize = {
@@ -76,32 +117,49 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
 
     let timestamp = new Date().toISOString();
 
-    if ((prioritize.is_for === true || prioritize.is_for === false) && prioritize.stake_amount > 0 && isSubmitted === false) {
+    let balanceDetails = {
+      userwalletid: userProfile.Wallet[0].wallet_id,
+      userwalletbalance: userProfile.Wallet[0].balance,
+      prevStake: 0,
+    }
 
-      const { data: newPrioritize, error: newPrioritizeError } = await supabase
-        .from('Prioritization')
-        .insert({
-          is_for: prioritize.is_for,
-          stake_amount: prioritize.stake_amount,
-          proposal_id: prioritize.proposal,
-          profile_id: prioritize.prioritizer,
-          create_at: timestamp
-        })
-        .select()
+    if (prioritize.stake_amount > balanceDetails.userwalletbalance) {
 
-      if (newPrioritizeError) {
-        console.error(newPrioritizeError)
-        throw newPrioritizeError;
-      }
-
-      setInValid(false);
-      set_isSubmitted(true);
-
-      router.refresh();
+      insufficientBalance(balanceDetails.userwalletbalance);
 
     }
     else {
-      setInValid(true);
+
+      if ((prioritize.is_for === true || prioritize.is_for === false) && prioritize.stake_amount > 0 && isSubmitted === false) {
+
+        const { data: newPrioritize, error: newPrioritizeError } = await supabase
+          .from('Prioritization')
+          .insert({
+            is_for: prioritize.is_for,
+            stake_amount: prioritize.stake_amount,
+            proposal_id: prioritize.proposal,
+            profile_id: prioritize.prioritizer,
+            create_at: timestamp
+          })
+          .select()
+
+        if (newPrioritizeError) {
+          console.error(newPrioritizeError)
+          throw newPrioritizeError;
+        }
+
+        updateWalletbalance(balanceDetails, prioritize.stake_amount, supabase);
+        displaySuccess();
+        setInValid(false);
+        set_isSubmitted(true);
+
+      }
+      else {
+        displayInvalidEntry();
+        setInValid(true);
+      }
+      
+      router.refresh();
     }
   }
 
@@ -111,34 +169,62 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
       stake_amount: stake,
       id: userpriorize[0].prioritization_id
     }
+    
+    let balanceDetails = {
+      userwalletid: userProfile.Wallet[0].wallet_id,
+      userwalletbalance: userProfile.Wallet[0].balance,
+      prevStake: userpriorize[0].stake_amount, 
+    }
 
-    if ((update.is_for === true || update.is_for === false) && update.stake_amount > 0) {
+    if (update.stake_amount > balanceDetails.userwalletbalance) {
 
-      const { data: updatePrioritize, error: updatePrioritizeError } = await supabase
-        .from('Prioritization')
-        .update({
-          is_for: update.is_for,
-          stake_amount: update.stake_amount,
-        })
-        .eq('prioritization_id', update.id)
-        .select()
-
-      if (updatePrioritizeError) {
-        console.error(updatePrioritizeError)
-        throw updatePrioritizeError;
-      }
-
-      setInValid(false);
-      set_isSubmitted(true);
+      insufficientBalance(balanceDetails.userwalletbalance);
 
     }
     else {
-      setInValid(true);
+
+      if ((update.is_for === true || update.is_for === false) && update.stake_amount > 0) {
+
+        const { data: updatePrioritize, error: updatePrioritizeError } = await supabase
+          .from('Prioritization')
+          .update({
+            is_for: update.is_for,
+            stake_amount: update.stake_amount,
+          })
+          .eq('prioritization_id', update.id)
+          .select()
+
+        if (updatePrioritizeError) {
+          console.error(updatePrioritizeError)
+          throw updatePrioritizeError;
+        }
+
+        updateWalletbalance(balanceDetails, update.stake_amount, supabase);
+        displaySuccess();
+        setInValid(false);
+        set_isSubmitted(true);
+
+      }
+      else {
+        displayInvalidEntry();
+        setInValid(true);
+      }
+
+      router.refresh();
+
     }
   }
 
 
   const handleRemovePrioritize = async () => {
+
+    let balanceDetails = {
+      userwalletid: userProfile.Wallet[0].wallet_id,
+      userwalletbalance: userProfile.Wallet[0].balance,
+      prevStake: userpriorize[0].stake_amount,
+    }
+
+    const addedStake = 0;
 
     const { error: deletePrioritizeError } = await supabase
         .from('Prioritization')
@@ -150,29 +236,74 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
       throw deletePrioritizeError;
     }
 
+
+    updateWalletbalance(balanceDetails, addedStake, supabase);
+
+    displayRemoveSuccess();
+
+    set_isforstate(null);
+    set_stake(null);
+
     setInValid(false);
-    set_isSubmitted(true);
+    set_isSubmitted(false);
+
+    router.refresh();
+  }
+
+  function insufficientBalance(available_funds) {
+    return(
+      toast({
+        variant: "destructive",
+        title: "Insufficient funds in your wallet.",
+        description: `Current balance: ${available_funds} Carrots` 
+      })
+    );
   }
 
 
   function displaySubmitbtn() {
     return(
-      <Button className="w-full" onClick={handlePrioritize}>Prioritize</Button>
+      <Button className="w-full" onClick={() => handlePrioritize()}>Prioritize</Button>
     );
   }
 
   function displayUpdate_Removebtn() {
     return(
       <div className="w-full flex justify-between">
-        <Button onClick={handleUpdatePrioritize}>Update</Button>      
-        <Button variant="outline" onClick={handleRemovePrioritize}>Delete</Button>
+        <Button onClick={() => handleUpdatePrioritize()}>Update</Button>      
+        <Button variant="outline" onClick={() => handleRemovePrioritize()}>Delete</Button>
       </div>
     );
   }
 
   function displaySuccess() {
+    return (
+      // <span className="font-semibold mt-2">Success!</span>
+
+      toast({
+        description: `Successfully Prioritized!` 
+      })
+    );
+  }
+
+  function displayRemoveSuccess() {
+
+    return (
+      // <span className="font-semibold mt-2">Success!</span>
+
+      toast({
+        description: `Successfully Deleted` 
+      })
+    );
+  }
+
+  function displayInvalidEntry() {
     return(
-      <span className="font-semibold mt-2">Success!</span>
+      toast({
+        variant: "destructive",
+        title: "Double Check your Entries",
+        description: 'Review prioritization form' 
+      })
     );
   }
 
@@ -198,12 +329,11 @@ export default function Prioritizationform( {userProfile, proposerid, userpriori
         </CardContent>
 
         <CardFooter className="flex flex-col">
-          {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> }
-          {/* <Button className="w-full" onClick={handlePrioritize}>Prioritize</Button> */}
+         {/*  {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> } */}
 
           {has_userprioritized === true ? displayUpdate_Removebtn() : displaySubmitbtn()}
 
-          {isSubmitted === true && displaySuccess()}
+          {/* {isSubmitted === true && displaySuccess()} */}
         </CardFooter>
       </Card>
     )

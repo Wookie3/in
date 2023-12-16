@@ -11,13 +11,13 @@ const Nav = async () => {
   const inOutButton = (session) => {
     return (session ?
       <form action="/auth/logout" method="post">
-        <button type="submit" className="block mt-4 lg:inline-block lg:mt-0 hover:text-gray-400 mr-4">
+        <button type="submit" className="block inline-block mt-0 hover:text-gray-400 mr-4">
           Sign Out
         </button>
       </form>
       :
       <Link href='/login'>
-        <button href="#responsive-header" className="block mt-4 lg:inline-block lg:mt-0 hover:text-gray-400 mr-4">
+        <button href="#responsive-header" className="block inline-block mt-0 hover:text-gray-400 mr-4">
           Sign In
         </button>
       </Link>
@@ -38,8 +38,8 @@ const Nav = async () => {
           <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="https://media.istockphoto.com/id/484208012/vector/carrot.jpg?s=612x612&w=0&k=20&c=BAtg_jJ0hdoQNoRH8h4C3Vbq0ieIf2oJ2q-tAQQOawc="><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" /></svg>
         </button>
       </div> */}
-      <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-        <div className="text-sm lg:flex-grow">
+      <div className="flex flex-grow lg:items-center lg:w-auto">
+        <div className="text-sm">
           <Link href='/dashboard'>
             <button href="#responsive-header" className={`block mt-4 ${hideIfPublic} lg:mt-0 hover:text-gray-400 mr-4`}>
               Dashboard

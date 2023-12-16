@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
 
 import Foragainstbtn from '@/components/for_againstbutton'
 
@@ -65,11 +66,38 @@ const checkuservalidation = (uservalidate, set_hasuservalidated, set_isforstate,
   }
 }
 
+//Calculates new balance of user's wallet
+const calculateBalance = (balanceDetails, newStake) => {
+
+  return balanceDetails.userwalletbalance + balanceDetails.prevStake - newStake;
+
+}
+
+//Updates user's wallet balance
+const updateWalletbalance = async (balanceDetails, newStake, supabase) => {
+
+  let newbalance = calculateBalance(balanceDetails, newStake);
+
+  const { data: updateWallet, error: updateWalletError } = await supabase
+  .from('Wallet')
+  .update({
+    balance: newbalance,
+  })
+  .eq('wallet_id', balanceDetails.userwalletid)
+  .select()
+
+  if (updateWalletError) {
+  console.error(updateWalletError)
+  throw updateWalletError;
+  }
+}
+
 
 export default function Validationform({userprofile, contributionid, uservalidate}) {
 
   const supabase = createClientComponentClient();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [has_uservalidated, set_hasuservalidated] = useState(false);
 
@@ -84,6 +112,15 @@ export default function Validationform({userprofile, contributionid, uservalidat
   const [isSubmitted, setisSubmitted] = useState(false);
   const [isInvalid, setInValid] = useState(false);
 
+  //console.log(userprofile)
+  //console.log(userprofile.Wallet[0])
+  //console.log(uservalidate)
+
+  // console.log(`stake: ${stake}`);
+  // console.log(`review: ${review}`);
+  // console.log(`forstate: ${isforstate}`);
+  // console.log(`has_validated: ${has_uservalidated}`);
+
   const handleValidate = async () => {
     let validate = {
       is_for: isforstate,
@@ -92,42 +129,58 @@ export default function Validationform({userprofile, contributionid, uservalidat
     }
 
     let timestamp = new Date().toISOString();
-    let profileid = userprofile.profile_id
+    let profileid = userprofile.profile_id;
     
-    let reviewsize = (validate.userreview).length;
+    let reviewsize = (validate.userreview)?.length;
+
+    let balanceDetails = {
+      userwalletid: userprofile.Wallet[0].wallet_id,
+      userwalletbalance: userprofile.Wallet[0].balance,
+      prevStake: 0,
+    }
 
 
-    if ((validate.is_for === true || validate.is_for === false) && validate.stake_amount > 0 && reviewsize > 0 && isSubmitted === false) {
-        
-        const { data: newValidation, error: newValidationError } = await supabase
-        .from('Validation')
-        .insert( { 
-          review: validate.userreview,
-          stake_amount: validate.stake_amount,
-          contribution_id: contributionid,
-          profile_id: profileid,
-          create_at: timestamp,
-          is_for: validate.is_for
-        })
+    if (validate.stake_amount > balanceDetails.userwalletbalance) {
 
-        if (newValidationError) {
-            console.error(newValidationError)
-            throw newValidationError;
-        }
+      //console.log("insufficient funds");
+      insufficientBalance(balanceDetails.userwalletbalance);
 
-        if (isSubmitted === false) {
-            setisSubmitted(true);
-            setInValid(false);
-        }
-
-        router.refresh();
-    
     }
     else {
-        console.log('Double Check your Entries')
-        setInValid(true);
-    }
 
+      if ((validate.is_for === true || validate.is_for === false) && validate.stake_amount > 0 && reviewsize > 0 && isSubmitted === false) {
+
+        const { data: newValidation, error: newValidationError } = await supabase
+          .from('Validation')
+          .insert({
+            review: validate.userreview,
+            stake_amount: validate.stake_amount,
+            contribution_id: contributionid,
+            profile_id: profileid,
+            create_at: timestamp,
+            is_for: validate.is_for
+          })
+
+        if (newValidationError) {
+          console.error(newValidationError)
+          throw newValidationError;
+        }
+
+        updateWalletbalance(balanceDetails, validate.stake_amount, supabase);
+
+        displaySuccess();
+        setisSubmitted(true);
+        setInValid(false);
+
+      }
+      else {
+        //console.log('Double Check your Entries')
+        displayInvalidEntry();
+        setInValid(true);
+      }
+
+      router.refresh();
+    }
   }
 
   const handleUpdateValidate = async () => {
@@ -140,35 +193,61 @@ export default function Validationform({userprofile, contributionid, uservalidat
 
     let reviewsize = (val_update.userreview).length;
 
-    if ((val_update.is_for === true || val_update.is_for === false) && val_update.stake_amount > 0 && reviewsize > 0) {
+    let balanceDetails = {
+      userwalletid: userprofile.Wallet[0].wallet_id,
+      userwalletbalance: userprofile.Wallet[0].balance,
+      prevStake: uservalidate[0].stake_amount,
+    }
 
-      const { data: updateValidate, error: updateValidateError } = await supabase
-        .from('Validation')
-        .update({
-          is_for: val_update.is_for,
-          stake_amount: val_update.stake_amount,
-          review: val_update.userreview
-        })
-        .eq('validation_id', val_update.id)
-        .select()
+    if (val_update.stake_amount > balanceDetails.userwalletbalance) {
 
-      if (updateValidateError) {
-        console.error(updateValidateError)
-        throw updateValidateError;
-      }
-
-      setInValid(false);
-      setisSubmitted(true);
-
-      router.refresh();
+      //console.log('insufficient balance');
+      insufficientBalance(balanceDetails.userwalletbalance);
 
     }
     else {
-      setInValid(true);
+
+      if ((val_update.is_for === true || val_update.is_for === false) && val_update.stake_amount > 0 && reviewsize > 0) {
+
+        const { data: updateValidate, error: updateValidateError } = await supabase
+          .from('Validation')
+          .update({
+            is_for: val_update.is_for,
+            stake_amount: val_update.stake_amount,
+            review: val_update.userreview
+          })
+          .eq('validation_id', val_update.id)
+          .select()
+
+        if (updateValidateError) {
+          console.error(updateValidateError)
+          throw updateValidateError;
+        }
+
+        updateWalletbalance(balanceDetails, val_update.stake_amount, supabase);
+        displaySuccess();
+        setInValid(false);
+        setisSubmitted(true);
+
+      }
+      else {
+        displayInvalidEntry();
+        setInValid(true);
+      }
+
+      router.refresh();
     }
   }
 
   const handleRemoveValidate = async () => {
+
+    let balanceDetails = {
+      userwalletid: userprofile.Wallet[0].wallet_id,
+      userwalletbalance: userprofile.Wallet[0].balance,
+      prevStake: uservalidate[0].stake_amount,
+    }
+
+    const addedStake = 0;
 
     const { error: deleteValidateError } = await supabase
         .from('Validation')
@@ -180,31 +259,74 @@ export default function Validationform({userprofile, contributionid, uservalidat
       throw deleteValidateError;
     }
 
+    updateWalletbalance(balanceDetails, addedStake, supabase);
+
+    displayRemoveSuccess();
+
+    set_isforstate(null);
+    set_stake(null);
+    set_review(null);
+
     setInValid(false);
-    setisSubmitted(true);
+    setisSubmitted(false);
+
+    router.refresh();
 
   }
+
+  function insufficientBalance(available_funds) {
+    return(
+      toast({
+        variant: "destructive",
+        title: "Insufficient funds in your wallet.",
+        description: `Current balance: ${available_funds} Carrots` 
+      })
+    );
+  }
+
 
 
   function displaySubmitbtn() {
 
     return(
-      <Button onClick={handleValidate}>Submit</Button>
+      <Button onClick={() => handleValidate()}>Submit</Button>
     );  
   }
 
   function displayUpdate_Removebtn() {
     return(
       <div className="w-full flex justify-between">
-        <Button variant="outline" onClick={handleRemoveValidate}>Delete</Button>
-        <Button onClick={handleUpdateValidate}>Update</Button>      
+        <Button variant="outline" onClick={() => handleRemoveValidate()}>Delete</Button>
+        <Button onClick={() => handleUpdateValidate()}>Update</Button>      
       </div>
     );
   }
 
   function displaySuccess() {
     return(
-      <div className="font-semibold">Success!</div>
+      // <div className="font-semibold">Success!</div>
+      toast({
+        description: `Successfully Validated!` 
+      })
+    );
+  }
+
+  function displayRemoveSuccess() {
+
+    return (
+      toast({
+        description: `Successfully Deleted` 
+      })
+    );
+  }
+
+  function displayInvalidEntry() {
+    return(
+      toast({
+        variant: "destructive",
+        title: "Double Check your Entries",
+        description: 'Review validation form' 
+      })
     );
   }
 
@@ -245,11 +367,11 @@ export default function Validationform({userprofile, contributionid, uservalidat
 
           
           <DialogFooter className="flex flex-col"> 
-            {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> }
+            {/* {isInvalid === true &&  <Label htmlFor="errorMessage" className="text-xs text-red-500 mb-2">Double Check your Entries</Label> } */}
             
             {has_uservalidated === true ? displayUpdate_Removebtn() : displaySubmitbtn()}
 
-            {isSubmitted === true && displaySuccess() }
+            {/* {isSubmitted === true && displaySuccess() } */}
           </DialogFooter>         
         </DialogContent>
       </Dialog>

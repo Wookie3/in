@@ -18,12 +18,28 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
+  import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog";
+  import { Button } from "@/components/ui/button";
+    import { Input } from "@/components/ui/input";
+    import { Label } from "@/components/ui/label";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 import { Carrot } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import AddCarrots from './addCarrots.jsx';
   
 /* import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -145,12 +161,15 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
     const [contributions, setcontributions] = useState([]);
     const [validations, setvalidations] = useState([]);
     const [prioritizations, setprioritizations] = useState([]);
+    // const [amount, setAmount] = useState(0);
+    const [walletData, setwalletData] = useState(null);
+
       
     const getWallet = useCallback(async (userprofile) => {
 
         const { data: walletData, error: walletError } = await supabase
         .from('Wallet')
-        .select('balance')
+        .select('balance, wallet_id')
         .eq('profile_id', userprofile.profile_id)
         .single()
 
@@ -161,6 +180,7 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
 
         if (walletData != null) {
             setwallet_balance(walletData.balance)
+            setwalletData(walletData)
           }
     }, [supabase])
 
@@ -302,118 +322,131 @@ const Dashboard_clientside = ({userprofile, initialRabbitholes}) => {
 
     //console.log(validations)
 
-    return(
-        <>
+    return (
+      <>
+        {/* My Carrot Block Component */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6 items-center m-5">
+          <h1 className="text-3xl font-bold tracking-tight col-span-4">
+            Hi, {username}{" "}
+          </h1>
 
-            {/* My Carrot Block Component */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6 items-center m-5">
+          <Card className="w-64 h-28 col-span-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                My Carrot Balance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between">
+                <div className="flex flex-row text-2xl font-bold">
+                  <Carrot size={25} className="mr-2" /> {`${wallet_balance}`}
+                </div>
+                <AddCarrots walletData={walletData} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-                <h1 className="text-3xl font-bold tracking-tight col-span-4">Hi, {username} </h1>
+        {/* Tab Component - 'Rabbit-Hole View' & 'My Tasks' */}
+        <Tabs defaultValue="Rabbit-Hole" className="space-y-4 m-5">
+          <TabsList className="">
+            <TabsTrigger value="Rabbit-Hole">Rabbit-Hole View</TabsTrigger>
+            <TabsTrigger value="Tasks">My Tasks</TabsTrigger>
+          </TabsList>
 
-                <Card className="w-64 h-28 col-span-2">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            My Carrot Balance
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex flex-row text-2xl font-bold"> <Carrot size={25} className="mr-2" /> {`${wallet_balance}`}</div>
-                    </CardContent>
-                </Card>
+          {/* Tab - 'Rabbit-Hole View' */}
+          <TabsContent value="Rabbit-Hole" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+              <Card className="col-span-4">
+                <CardHeader className="flex flex-row justify-between items-center ">
+                  <CardTitle>Join A Rabbit Hole</CardTitle>
+
+                  <CreateRabbitholeForm
+                    userprofileid={userprofile.profile_id}
+                  />
+                </CardHeader>
+
+                <CardContent className="h-96">
+                  {/* <Input placeholder="Search" className="w-3/4 pl-4" /> */}
+
+                  {/* {rabbitholelist(testdata2)} */}
+
+                  <Searchbar
+                    rabbitholes={initialRabbitholes}
+                    setfilter_rabbitholes={setfilter_rabbitholes}
+                  />
+                  <Rabbitholelist rabbitholedata={filter_rabbitholes} />
+                </CardContent>
+              </Card>
+
+              <Card className="col-span-2">
+                <CardHeader>
+                  <CardTitle>My Communities</CardTitle>
+                </CardHeader>
+
+                <CardContent className="pl-4">
+                  <h2 className="text-lg italic tracking-tight col-span-4 mb-1">
+                    {" "}
+                    Admin{" "}
+                  </h2>
+                  <Memberlist members={damsirelist} />
+
+                  <h2 className="text-lg italic tracking-tight col-span-4 my-4 mb-1">
+                    {" "}
+                    Member{" "}
+                  </h2>
+                  <Memberlist members={memberlist} />
+                </CardContent>
+              </Card>
             </div>
+          </TabsContent>
 
+          {/* Tab - 'My Tasks' */}
+          <TabsContent value="Tasks" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>My Proposals</CardTitle>
+                </CardHeader>
 
-            {/* Tab Component - 'Rabbit-Hole View' & 'My Tasks' */}
-            <Tabs defaultValue="Rabbit-Hole" className="space-y-4 m-5">
-                <TabsList className="">
-                    <TabsTrigger value="Rabbit-Hole">Rabbit-Hole View</TabsTrigger>
-                    <TabsTrigger value="Tasks">My Tasks</TabsTrigger>
-                </TabsList>
+                <CardContent className="h-96">
+                  <Mytasklist tasks={proposals} />
+                </CardContent>
+              </Card>
 
-                {/* Tab - 'Rabbit-Hole View' */}
-                <TabsContent value="Rabbit-Hole" className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-                        <Card className="col-span-4">
-                            <CardHeader className="flex flex-row justify-between items-center ">
-                                <CardTitle>Join A Rabbit Hole</CardTitle>
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>My Prioritizations</CardTitle>
+                </CardHeader>
 
-                                <CreateRabbitholeForm userprofileid={userprofile.profile_id}/>
-                            </CardHeader>
+                <CardContent className="h-96">
+                  <Mytasklist tasks={prioritizations} />
+                </CardContent>
+              </Card>
 
-                            <CardContent className="h-96">
-                                {/* <Input placeholder="Search" className="w-3/4 pl-4" /> */}
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>My Contributions</CardTitle>
+                </CardHeader>
 
-                                {/* {rabbitholelist(testdata2)} */}
+                <CardContent className="h-96">
+                  <Mytasklist tasks={contributions} />
+                </CardContent>
+              </Card>
 
-                                <Searchbar rabbitholes={initialRabbitholes} setfilter_rabbitholes={setfilter_rabbitholes} />
-                                <Rabbitholelist rabbitholedata={filter_rabbitholes} />
-                            </CardContent>
-                        </Card>
+              <Card className="col-span-1">
+                <CardHeader>
+                  <CardTitle>My Validations</CardTitle>
+                </CardHeader>
 
-                        <Card className="col-span-2">
-                            <CardHeader>
-                                <CardTitle>My Communities</CardTitle>
-                            </CardHeader>
-
-                            <CardContent className="pl-4">
-                                <h2 className="text-lg italic tracking-tight col-span-4 mb-1"> Admin </h2>
-                                <Memberlist members={damsirelist}/>
-                                
-                                <h2 className="text-lg italic tracking-tight col-span-4 my-4 mb-1"> Member </h2>
-                                <Memberlist members={memberlist}/>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-
-                {/* Tab - 'My Tasks' */}
-                <TabsContent value="Tasks" className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-
-                        <Card className="col-span-1">
-                            <CardHeader>
-                            <CardTitle>My Proposals</CardTitle>
-                            </CardHeader>
-
-                            <CardContent className="h-96">
-                                <Mytasklist tasks={proposals}/> 
-                            </CardContent>
-                        </Card>
-
-                        <Card className="col-span-1">
-                            <CardHeader>
-                                <CardTitle>My Prioritizations</CardTitle>
-                            </CardHeader>
-
-                            <CardContent className="h-96">
-                                <Mytasklist tasks={prioritizations}/> 
-                            </CardContent>
-                        </Card>
-
-                        <Card className="col-span-1">
-                            <CardHeader>
-                                <CardTitle>My Contributions</CardTitle>
-                            </CardHeader>
-
-                            <CardContent className="h-96">
-                                <Mytasklist tasks={contributions}/> 
-                            </CardContent>
-                        </Card>
-
-                        <Card className="col-span-1">
-                            <CardHeader>
-                                <CardTitle>My Validations</CardTitle>
-                            </CardHeader>
-
-                            <CardContent className="h-96">
-                                <Mytasklist tasks={validations}/> 
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-            </Tabs>
-
-        </>
+                <CardContent className="h-96">
+                  <Mytasklist tasks={validations} />
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </>
     );
 }
 
